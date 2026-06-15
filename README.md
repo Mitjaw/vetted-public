@@ -13,17 +13,17 @@ Vetted scans finance YouTube, pulls out every stock that gets mentioned, and tra
 
 ## Screenshots
 
-Owner dashboard — consensus picks, channel credibility, recent scans:
+Owner dashboard — all-time consensus picks, channel credibility, recent scans:
 ![Admin dashboard](docs/screenshots/admin_dashboard.png)
 
-Channel management — 20 tracked channels with scan status and transcript stats:
-![Channels](docs/screenshots/admin_channels.png)
+Consumer home — KPIs, most-covered stocks, live activity feed:
+![Consumer home](docs/screenshots/consumer_home.png)
+
+Consumer channel leaderboard — accuracy %, avg ROI, 12-month accuracy dots:
+![Consumer channels](docs/screenshots/consumer_channels.png)
 
 Extraction eval harness — ground truth templates with annotation counts:
 ![Evals](docs/screenshots/admin_evals.png)
-
-Consumer app login (email + password auth, subscription tiers):
-![Consumer login](docs/screenshots/consumer_login.png)
 
 ## How it works
 
