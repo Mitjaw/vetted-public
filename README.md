@@ -1,148 +1,110 @@
-# Vetted — Alternative-Data Pipeline for Finance YouTube
+# Vetted
 
-Vetted scans 20 tracked finance YouTube channels daily, extracts every stock mention using a multi-pass Claude pipeline, tracks the real-world ROI of each pick, and surfaces the results through two web apps.
+Vetted scans finance YouTube, pulls out every stock that gets mentioned, and tracks how those picks actually performed. The point is to answer something nobody indexes properly: which finance YouTubers are right, and by how much.
 
-![Admin dashboard](docs/screenshots/admin_dashboard.png)
-
----
+> **Status:** working prototype. About 2,500 videos processed across 26 months of content. The owner dashboard and a read-only consumer app are built. Not launched yet. See [Status & limitations](#status--limitations).
 
 ## What it does
 
-1. **Fetches** new videos from tracked channels via TranscriptAPI's RSS endpoint (no YouTube quota cost).
-2. **Extracts** stock mentions from transcripts using a three-pass LLM pipeline (discovery → analysis → hallucination-verification).
-3. **Tracks ROI** for every pick: baseline price at publish date, then 7d / 30d / 90d / 1y milestones vs SPY/QQQ/EWG benchmark.
-4. **Exposes** the data through an owner dashboard (full admin) and a consumer app (subscription-gated product).
-
----
+- Pulls full transcripts from finance YouTube channels via [TranscriptAPI](https://transcriptapi.com). No scraping, no quota burned on transcripts.
+- Runs a three-pass Claude Haiku pipeline over each transcript to pull out every ticker, plus sentiment, a conviction score, a recommendation, and a quote backing it up.
+- Tracks ROI for every pick from its publish-date price, at 3, 7, 14, 30, 60, 90, and 180 days, each benchmarked against SPY, QQQ, and a DAX proxy (EWG).
+- Ranks channels by how accurate their picks actually were once the returns settled, then surfaces picks from the channels that have been right.
 
 ## Screenshots
 
-| Channels | Eval harness |
-|---|---|
-| ![Channels](docs/screenshots/admin_channels.png) | ![Evals](docs/screenshots/admin_evals.png) |
+Owner dashboard — consensus picks, channel credibility, recent scans:
+![Admin dashboard](docs/screenshots/admin_dashboard.png)
 
-**Consumer app** (email + password auth, subscription tiers):
+Channel management — 20 tracked channels with scan status and transcript stats:
+![Channels](docs/screenshots/admin_channels.png)
 
+Extraction eval harness — ground truth templates with annotation counts:
+![Evals](docs/screenshots/admin_evals.png)
+
+Consumer app login (email + password auth, subscription tiers):
 ![Consumer login](docs/screenshots/consumer_login.png)
 
----
-
-## Architecture
+## How it works
 
 ```
-YouTube RSS / TranscriptAPI
-        │
-        ▼
-   scanner.py          ← fetches new videos, stores transcripts
-        │
-        ▼
-   brain.py            ← 3-pass Claude extraction pipeline
-        │
-        ▼
-   vetted.db           ← SQLite: channels, videos, mentions, ROI
-        │
-   ┌────┴─────────────────────────┐
-   ▼                              ▼
-main.py (port 8000)     consumer/main.py (port 8001)
-Owner dashboard         Consumer product
-FastAPI + Jinja2        FastAPI + Jinja2
-HTTP Basic Auth         Email/password + sessions
+YouTube channels
+   ↓
+TranscriptAPI        fetch transcript (retry with backoff, cap 80k chars)
+   ↓
+YouTube Data API     enrich metadata (title, duration, views) in a separate pass
+   ↓
+brain.py             three-pass Claude Haiku extraction
+                       pass 1 (temp 1.0)  discovery: find every vehicle
+                       pass 2 (temp 0.7)  analysis: sentiment, conviction, quote
+                       pass 3 (temp 0.5)  verify: fix tickers, drop hallucinations
+   ↓
+ROI engine           yfinance primary, Tiingo fallback
+                       baseline = close on publish date
+                       milestones at 3 to 180 days, plus benchmark vs SPY/QQQ/EWG
+   ↓
+SQLite  →  FastAPI + Jinja2 + Chart.js dashboards
+           scheduled with APScheduler: daily scan 06:00 UTC, ROI sync every 3h
 ```
 
-**Stack:** Python 3.12 · FastAPI · SQLite · APScheduler · Jinja2 · Chart.js · PM2 · Caddy
+### Why three passes, and why Haiku
 
----
+One pass either misses tickers or makes them up. So I split it. The first pass runs hot to catch everything, the second works through each ticker carefully, and the third re-reads the transcript to fix mistakes and throw out anything hallucinated. If a pass fails it falls back to a single combined call. There's also a plain string check that the ticker or company name actually shows up in the transcript.
 
-## Three-pass extraction (`brain.py`)
+Picking Haiku wasn't a guess. The repo has an eval framework (`evals/`) that scores each setup against hand-annotated videos on precision, recall, F1, and F2. I rank on F2, because missing a real pick is worse than flagging one extra to go check.
 
-The core extraction runs three sequential Claude calls per video:
+|Config                           |Precision|Recall|F1   |F2   |Sentiment Acc|
+|---------------------------------|---------|------|-----|-----|-------------|
+|three_pass **haiku** (production)|0.859    |0.799 |0.827|0.810|0.945        |
+|three_pass sonnet                |0.834    |0.814 |0.824|0.818|0.945        |
+|two_pass haiku→sonnet            |0.812    |0.794 |0.803|0.797|0.945        |
+|single_pass opus                 |0.613    |0.774 |0.659|0.714|0.938        |
+|three_pass gemini-2.5-flash      |0.800    |0.083 |0.062|0.073|1.000        |
 
-| Pass | Model | Temp | Task |
-|---|---|---|---|
-| 1 — Discovery | Haiku 4.5 | 1.0 | Find every investment vehicle in the transcript |
-| 2 — Analysis | Haiku 4.5 | 0.7 | Extract sentiment, confidence, recommendation, context per ticker |
-| 3 — Verification | Haiku 4.5 | 0.5 | Fact-check pass 2 against the raw transcript, drop hallucinations |
+Three-pass Haiku scores about the same as Sonnet but costs roughly 20x less, which matters a lot when you run it over thousands of videos. Honest caveat: the ground-truth set is only 7 videos, so this is enough to choose a model, not enough to publish as a real accuracy claim.
 
-Hallucination is the primary risk: a wrong ticker or fabricated sentiment corrupts ROI silently. Pass 3 is the guard layer. Any model or prompt change must be benchmarked through the eval harness before going live.
+## Scale
 
----
+|Metric                        |Value                 |
+|------------------------------|----------------------|
+|Videos processed              |2,536                 |
+|Channels tracked              |20                    |
+|Date range                    |March 2024 to May 2026|
+|Total stock mentions extracted|13,530                |
+|Verified mentions             |11,297 (83%)          |
+|Distinct tickers              |~2,000                |
+|ROI outcomes settled          |11,699                |
+|Daily closing prices cached   |687,737               |
 
-## Eval harness (`evals/`)
+## Tech stack
 
-A ground-truth eval system for iterating safely on the extraction pipeline:
+**Backend:** Python 3.11+, FastAPI, APScheduler (SQLite jobstore), Anthropic SDK (Claude Haiku 4.5)
+**Data:** yfinance and Tiingo for prices, TranscriptAPI and YouTube Data API v3 for content, SQLite
+**Frontend:** Jinja2, vanilla JS, Chart.js, custom CSS (no framework, no bundler)
+**Ops:** bcrypt auth, session middleware, rate limiting, structured JSON logging, `/health` endpoints, scheduled backups
 
-- **Ground truth** — 7 manually-annotated videos (`evals/ground_truth/*.json`) with verified ticker/sentiment labels
-- **Configs** — named pipeline configs (model combinations, pass counts, temperatures) in `evals/custom_configs/`
-- **Runner** — executes any config against the ground truth set (`evals/runner.py`)
-- **Scorer** — computes precision, recall, F2 (recall-weighted) per run (`evals/scorer.py`)
-- **Results** — 60+ benchmark runs stored in `evals/results/` for comparison
-
----
-
-## Key files
-
-| File | Purpose |
-|---|---|
-| `brain.py` | Three-pass LLM extraction pipeline |
-| `scanner.py` | Video fetching + transcript ingestion |
-| `market_data.py` | Price sync (yfinance primary, Tiingo fallback) |
-| `roi_updater.py` | ROI milestone computation vs market benchmarks |
-| `channel_fetcher.py` | TranscriptAPI channel + RSS integration |
-| `extract.py` | Transcript fetching helpers |
-| `main.py` | Owner dashboard (FastAPI, port 8000) |
-| `consumer/main.py` | Consumer product (FastAPI, port 8001) |
-| `consumer/auth.py` | bcrypt password hashing + session auth |
-| `consumer/limiter.py` | Per-IP rate limiting (slowapi) |
-| `scheduler.py` | APScheduler jobs: daily scan, hourly ROI, nightly backup |
-| `db_manager.py` | Schema management + migrations |
-
----
-
-## Setup
+## Running locally
 
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
+cp .env.example .env   # fill in ANTHROPIC_API_KEY, TRANSCRIPTAPI_KEY, etc.
 
-cp .env.example .env
-# Fill in: ANTHROPIC_API_KEY, TIINGO_API_KEY, YOUTUBE_API_KEY,
-#          TRANSCRIPTAPI_KEY, DASHBOARD_PASSWORD
-
-# Owner dashboard
+# Owner dashboard (scans, evals, channels, ROI, exports)
 uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-
-# Consumer app (separate terminal)
-uvicorn consumer.main:app --host 127.0.0.1 --port 8001 --reload
+# → http://127.0.0.1:8000  (HTTP Basic Auth)
 ```
 
----
+## Status & limitations
 
-## Data model (core tables)
+This is a prototype I built to test an idea, not a finished product. Where it actually stands:
 
-| Table | Description |
-|---|---|
-| `channels` | 20 tracked YouTube channels, scan metadata |
-| `videos` | Per-video metadata + raw transcript |
-| `mentions` | Extracted picks: ticker, sentiment, confidence, recommendation |
-| `roi_tracking` | Per-mention baseline price + current ROI |
-| `roi_milestones` | ROI at 3/7/14/30/60/90/180/365d + benchmark-relative |
-| `price_daily` | Daily close per ticker (yfinance / Tiingo) |
-| `daily_sentiment` | Per-ticker per-day bullish/bearish/neutral aggregates |
+- Not launched. The consumer app, auth, Stripe, and email are all wired up but switched off. No live keys, no users. The product side was never the goal. The pipeline was.
+- Small eval set. Seven annotated videos is enough to choose a model, not to make accuracy claims.
+- Some early ROI rows are noisy. A few pre-2025 rows have price-scale bugs from an old version of the fetch code. Recent data is clean. I wouldn't quote one headline ROI number off the whole table without filtering first.
 
-ROI baseline rule: always the closing price on the video's publish date.
+## What's not in this repo
 
----
+The pricing and subscription logic, the launch plan, and the live database stay private.
 
-## Running the evals
-
-```bash
-# List available configs
-python -m evals.runner --list
-
-# Run a config against all ground-truth videos
-python -m evals.runner --config three_pass_haiku
-
-# Compare results
-python -m evals.scorer --compare results/2026-03-22-*.json
-```
+Built solo. The parts worth looking at are the prompt design in `brain.py` and the eval harness in `evals/`.
