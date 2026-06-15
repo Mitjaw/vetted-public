@@ -14,7 +14,7 @@ Vetted scans finance YouTube, pulls out every stock that gets mentioned, and tra
 ## Screenshots
 
 Owner dashboard — all-time consensus picks, channel credibility, recent scans:
-![Admin dashboard](docs/screenshots/admin_dashboard.png)
+![Admin dashboard](docs/screenshots/admin_dashboard_v2.png)
 
 Consumer home — KPIs, most-covered stocks, live activity feed:
 ![Consumer home](docs/screenshots/consumer_home.png)
