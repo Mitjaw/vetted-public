@@ -1,0 +1,260 @@
+{
+  "video_id": "5e19vrGm5ic",
+  "title": "AI Biggest Surprise is Coming, These are the Stocks to Buy",
+  "channel": "Let's Talk Money! with Joseph Hogue, CFA",
+  "language": "en",
+  "notes": "",
+  "annotations": [
+    {
+      "ticker": "ORCL",
+      "company_name": "ORACLE",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "NBIS",
+      "company_name": "Nebias",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "NVDA",
+      "company_name": "NVIDIA",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "SMCI",
+      "company_name": "Super Micro Computer Inc",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.8,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "BTC",
+      "company_name": "Bitcoin",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.7,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "ETHA",
+      "company_name": "iShares Etherum Trust ETF",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.9,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "ETHB",
+      "company_name": "iShares Staked Ethereum Trust ETF",
+      "sentiment": "bullish",
+      "recommendation": "watch",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.7,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "DRI",
+      "company_name": "Darden Restaurants",
+      "sentiment": "bullish",
+      "recommendation": "hold",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "WDAY",
+      "company_name": "Workday Inc",
+      "sentiment": "bearish",
+      "recommendation": "sell",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.8,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "CRM",
+      "company_name": "Salesforce",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.9,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "ACN",
+      "company_name": "Accenture",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.9,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "AMZN",
+      "company_name": "Amazon",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "MSFT",
+      "company_name": "Microsoft",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "META",
+      "company_name": "Meta",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "GOOGL",
+      "company_name": "Alphabet",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "CRWD",
+      "company_name": "Crowdstrike",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "FTNT",
+      "company_name": "Fortnet",
+      "sentiment": "bullish",
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "PANW",
+      "company_name": "Palo Alto Networks",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "ZS",
+      "company_name": "Zscaler",
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "ETH",
+      "company_name": "Ethereum",
+      "sentiment": null,
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": 0.8,
+      "confidence_max": 1,
+      "notes": ""
+    },
+    {
+      "ticker": "INX",
+      "company_name": "S&P500",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "QSR",
+      "company_name": "Restaurant Services International",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "TXRH",
+      "company_name": "Texas Roadhouse",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "CMG",
+      "company_name": "Chipotle",
+      "sentiment": null,
+      "recommendation": "buy",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    },
+    {
+      "ticker": "NOW",
+      "company_name": "Servicenow",
+      "sentiment": null,
+      "recommendation": "reference",
+      "is_real_stock_mention": true,
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": ""
+    }
+  ],
+  "transcript": "Hey bow tie nation, Joseph Hog with your weekly stock market update. Now coming at you on Sunday at noon before the week starts with the stocks to watch and the stock market news you need to see. And nation Nvidia CEO Jensen Hang once warned that AI is going to eat software and we've seen a crash in software stocks all this year, down 25 and 30% in just the two months. But a new study has just flipped that thinking on its head. In fact, not only is AI leading to more work and not layoffs, but we've got the first proof that it is boosting revenue and making these stocks a must buy. I'll explain why and highlight the stocks I'm buying along with important news for shares of Oracle, OCL, Super Micro Computer, SMCI, and an update to our stock market outlook. But first, if you haven't yet, join me on the Blossom Investing app with a special invite link I'll leave in the description below. It's totally free to download and besides seeing the stocks I'm buying in real life. You'll see what over 500,000 investors are talking about in the social feed. It also helps support the channel. So, I appreciate that as well. So, look for that link or just scan the QR code here. But back to that truth about AI because folks, ever since Chat GPT was released in 2022, the chorus and the big fear has been, okay, so how long until we all get replaced by Rosie the robot? And after AI giant Anthropic recently released new models, that fear has accelerated this year, sending stocks in management, consulting, software, and cyber security tumbling. Shares of software providers Service Now, NO, and Salesforce Ticker CRM have plunged 25%. While consultant, Accenture, ACN is down 24%. And Zcaler ZS, one of my favorite cyber security companies, is down 31% this year. And while I've been trying to calm investors and I'm buying the dip myself, we are now seeing actual evidence that these fears are way overblown that AI is not going to replace all workers or software providers and in fact is boosting revenue for a lot of them in the near term. Analysis of 164,000 workers digital activity 180 days before and after adopting AI into their work processes shows that while AI may have helped decrease time working on some of those those deep concentration type projects by about 9%. Workers increase time spent on emails, apps and and other business tools by 94% over the period. The result is AI does create some efficiencies for workers, but that freed up time is getting immediately repurposed into other work. So, especially over the near term, over the next year or two, it's not likely that workers are going to get so much more efficient that employers can do everything with half their staff. And that news is slowly getting built back into stocks. Shares of Salesforce sticker CRM are already up 12% from their February low as the market clues into this idea, but still down 25% for the year and at a very attractive valuation. Decades of dominance in the customer relationship software market with its code embedded in thousands of corporate systems and managing more than 50 trillion records. Businesses have spent more than a decade building their day-to-day operations around Salesforce. And they can't just switch that off. The company is also leaning heavily into its own AI product, Agent Force, and has seen a 300% increase in the number of agent tasks performed by its clients using that product just in the last year. Salesforce is expected to post double-digit revenue growth this year and next to $50 billion. Not super tech growth, but very good for a mature industry and has recently ramped up its own share repurchase program, snapping up its own stock on the cheap. And valuation here is still very attractive at just 15 times on a price to this year's earnings basis. Now, I'm not saying it gets back anywhere close to that 56 times PE ratio it traded at just last January, but even back to investors paying maybe 30 times price to earnings would mean a $400 share price. And here management consultants like Accenture ticker ACN were some of the first to get hit with this stock down 49% from last year's peak and still down from the 2022 release of GPT. Accenture does report earnings this Thursday and could surprise investors with some very good news. That's because of 2,000 employees surveyed by McKenzie last summer, twothirds said their company hadn't started scaling AI and and half the employers in a PWC survey said they haven't seen any financial benefit from AI yet. Now, we do know there is some benefit to using AI in the enterprise, but the adoption is so slow that AI companies like Open AI and Anthropic are now paying consultancy firms to help companies implement their their AI. And despite those fears in the market, that is going to translate to more business for these consultancy firms rather than less with with Accenture reporting $2.2 billion in new AI bookings last quarter alone. That's 22% higher than just the previous quarter. And yes, there may come a day when AI takes over a lot of the revenue going to these consultancy firms, but it's going to be years out in the future. Now, Accenture is expected to post 7% revenue growth and flat earnings to $2.85 85 cents a share for the quarter when it reports here on Thursday, but it always beats expectations. Like Salesforce, it's a mature industry and only posting about 6% annual sales growth, but the sell-off has taken it to very attractive valuation. Trading at just 14 times this year's expected earnings of $13.84 a share, even a pop back to 20 times PE ratio would mean a 37% return to a $276 per share. And here, my favorite group, cyber security stocks, have been in freef fall since November with most down double digits. Fortnite, ticker FT&T, has managed to hold steady on a surprisingly good earnings report. But Crowdstrike Holdings, ticker CRWD, is down 17%. Palo Alto Network's PW is down 23%. And Zcaler, ticker ZS, has plunged 52% over just 4 months. The group got hit when Anthropic released a model that could scan code for bugs. And we have seen demonstrations of this, but also all the usual weaknesses of AI still come out here as well. In fact, one software provider had to shut off its bug bounty program last year because because of an explosion in AI slop reports, AI hallucinating a bug when there wasn't one. And against those fears that AI could replace cyber security companies, we've actually seen AI increasing the attack surface for hackers and a boom in the number of AI generated attacks. Even as AI does get better at spotting those attacks and the bugs, as elsewhere, companies aren't just going to be handing over the keys to their most critical firewall of security for those companies to AI. And that is going to translate to higher revenue growth for cyber securities, especially in the near term. Now, Zcaler is still expected to post 20% plus revenue growth this year and next to $4 billion and to leverage that and a strong double-digit earnings growth of $4 per share this year. But understand, cyber security stocks have never been cheap, and I wouldn't wait for them to get that way here either. Even on the sell-off, Zcaler trades for 38 times this year's expected earnings on a PE valuation. That's not bargain basement compared to a lot of these other stocks. But compared to the 90 times valuation it traded at just last October, and when you consider that 20% pace of growth, I'm taking advantage of the dip to buy more. nation. Over 25 years of investing and more than a decade as a professional analyst, there is one thing I've learned about stocks. The market is going to take any story to the extreme. Either building exuberantly higher or just crashing down in depression. Yes, there will come a day when AI takes more of the meaningfully bite out of the revenues for for cyber security, consultancy, and software companies, but that day is years plus out at least. Right now, these stocks have sold off into very strong value territory and investors brave enough to go against the flow on this can make a lot of money picking up these discounted stocks. Now, as always though, that doesn't mean just buying everything that's down. Shares of Workday Inc., ticker WDAY, are down 42% over the last year and that AI software apocalypse and could be more at risk than the others here. the HR and payroll processes its core products automate are more routine and standardized than other parts of enterprise software. And that means it may be there and earlier that we start to see AI really cannibalizing growth. So make sure you do your research to understand the risks of each company, not just ignore them. Now looking at the stocks I'm watching this week. First up, Darden Restaurants, ticker DRRi, is going to be reporting its earnings on Thursday and what is not only going to be a test for the stock, but also a clue into consumer spending. The company operates more than 2100 restaurants across the Olive Garden, Cheddars, Longhorn Steakhouse, and Ruth's Crisp brands. Now, the hotels, restaurant, and leisure segment of the consumer discretionary sector has dropped 3% so far this year, which is actually better than the 5% drop in this all the stocks in that sector. These are companies that make the things we really don't need to buy and could come under pressure as those gas prices sap consumer spending. And within that restaurant segment, Darden has done really well with the shares up 9% this year against a sell-off in peers, but that could change with its earnings this week. Restaurant Brands International, ticker QSR, is a close comparable with its stock ups just 6%, but others like Texas Roadhouse TX and Chipotle CMG both plunged following their weak earnings reports. Now, Darden has missed expectations during its last two earnings. And that 9% expected revenue growth this year could be a high bar to meet given that consumer weakness. So, while I love me some bread sticks at Olive Garden, I would hold off on buying the shares until after the earnings this week. Big news last week for Oracle. Ticker OCL saw it shares jump 12% last week when earnings came out much better than expected and the company increased its guidance to $90 billion in revenue for the year. Oracle blew away the expectations for revenue and profits and more so in the important cloud segment, posting $8.9 billion in sales. This is that critical cloud piece where Oracle is building those data centers to lease out for that AI compute power and prompting the company to reaffirm its $50 billion spending in infrastructure this year. And related to that, Nebia's group ticker NBIS has also saw it share price surge as much as 14% on Thursday when Nvidia ticker NVDA announced another $2 billion investment into this data center leasing company like Oracle. Nebius is racing to build out that AI data center infrastructure to lease out to other companies. And why that news for those two stocks is important. Not just for their own sake and investors, but because Super Microcomputer ticker SMCI didn't get a pop with the stock down 4% over the week, still up 6% for the year. Now, the news on Oracle and Nebus though should have given investors more conviction on SMCI because if those companies are on pace to build out those data centers, they're going to need the market leader in servers to fill them. Folks, you don't just throw a few million NVIDIA GPU chips on the floor of a data center. you you have to put them in connected servers and super micro controls 22% of the AI powered server market and that AI data center bet is still going beyond Oracle and Nebus just the four major hyperscalers that's Meta, Alphabet, Amazon and Microsoft those companies deploying that AI compute power are expected to spend over $700 billion this year on AI much of it going into that data center infrastructure. SMCI has affirmed its $40 billion plus target for revenue this year. That would be 87% growth from last and I continue to believe that the valuation and the opportunity on this one is going to be one of your best deals of the year. Updating our stock market outlook nation. It used to be when a Fed meeting was the big market event of the week. Now when the FOMC meets this week, it's likely to be a non-event against near unanimous opinion that central bank is going to keep its rates steady and won't cut for at least another 6 months. In fact, market odds have now shifted to a Fed on hold until its October meeting and just one more rate cut this year. Now, unfortunately, that is not going to help support stocks. And with earnings reports all but wrapped up until late April, it's going to be a market singularly focused on the war in Iran. I still do think that significant stimulus coming from those tax cuts is going to help boost stocks over the next few months, especially as companies start reporting earnings in May and guide to a healthier consumer. But we are still set up to have a very rough few weeks until then. News was late last week that a marine expeditionary unit, so URA brothers there, but shipped out to the Gulf over the weekend and we could have boots on the ground very soon in Iran. When that happens, it's likely the market is going to give up all remaining hope of a quick resolution and we could see at least a 10% correction in stocks. That would be down from about 5% down from where it is now. Long-term investors can ignore all this, but if you get stressed out on that roller coaster, you need to be balancing your portfolio with more stocks and sectors that that are going to hold up like utilities, those telecom names in the communication services group, real estate investment trusts, and healthcare. But also in the untold story over the last 2 weeks, Bitcoin and other cryptocurrencies have actually regained some of their risk hedging status. The price of Bitcoin is up 6% since the war began, while Ethereum is up 7.5%. All while the stocks in the S&P 500 market index are down more than 5% and could run a lot lower. Now, you out there in the nation know I'm buying up the EyesShares Ethereum Trust ETF. The ticker ETHA on that coming era of tokenization and that was a way to protect against that market risk. On Friday, the EyesShares staked Ethereum ETF, the ETHB also launched, which promises a dividend yield from staking of that cryptocurrency. So, income yield plus the upside and protection. Now, I know a lot of you still aren't sure about cryptocurrency, but it is definitely something to check out. Not just for that upside, but also for the risk balancing against stocks. Join me on the Blossom Investing app free with a special invite link in the description and see the stocks I'm buying in real time. Don't forget to join the Let's Talk Money community by tapping that subscribe button and clicking the bell notification."
+}

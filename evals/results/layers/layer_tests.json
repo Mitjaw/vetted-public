@@ -1,0 +1,1837 @@
+[
+  {
+    "raw": "```json\n{\n  \"stocks\": [\n    {\n      \"ticker\": \"VME\",\n      \"company_name\": \"VersaMet Royalties Corp\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"ZS\",\n      \"company_name\": \"Zscaler Inc.\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"MOS\",\n      \"company_name\": \"The Mosaic Company\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"GLD\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    },\n    {\n      \"ticker\": \"SLV\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    },\n    {\n      \"ticker\": \"USO\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    }\n  ]\n}\n```",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "VME",
+          "company_name": "VersaMet Royalties Corp",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ZS",
+          "company_name": "Zscaler Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "MOS",
+          "company_name": "The Mosaic Company",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GLD",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "SLV",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "USO",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 5257,
+      "output_tokens": 246,
+      "cost_usd": 0.00519
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.667,
+      "f1": 0.667,
+      "f2": 0.667,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": 0.0,
+      "quality_pts": 24,
+      "quality_max": 60,
+      "quality_display": "24/60",
+      "found": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "ZS"
+      ],
+      "missed": [
+        "UCO",
+        "VMET"
+      ],
+      "hallucinated": [
+        "USO",
+        "VME"
+      ],
+      "n_expected": 6,
+      "n_returned": 6,
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ]
+    },
+    "video_id": "ZEniGrLxkpY",
+    "title": " 2 Stocks To BUY NOW In March 2026",
+    "config_name": "two_pass_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-haiku-4-5-20251001",
+    "id": "lt_1774793006380",
+    "timestamp": "2026-03-29T16:03:26"
+  },
+  {
+    "raw": "```json\n{\n  \"stocks\": [\n    {\n      \"ticker\": \"VME\",\n      \"company_name\": \"VersaMet Royalties Corp\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"ZS\",\n      \"company_name\": \"Zscaler Inc.\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"MOS\",\n      \"company_name\": \"The Mosaic Company\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"GLD\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    },\n    {\n      \"ticker\": \"SLV\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    },\n    {\n      \"ticker\": \"USO\",\n      \"company_name\": \"NULL\",\n      \"asset_type\": \"commodity\"\n    }\n  ]\n}\n```",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "VME",
+          "company_name": "VersaMet Royalties Corp",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ZS",
+          "company_name": "Zscaler Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "MOS",
+          "company_name": "The Mosaic Company",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GLD",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "SLV",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "USO",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 5257,
+      "output_tokens": 246,
+      "cost_usd": 0.00519
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.667,
+      "f1": 0.667,
+      "f2": 0.667,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": 0.0,
+      "quality_pts": 24,
+      "quality_max": 60,
+      "quality_display": "24/60",
+      "found": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "ZS"
+      ],
+      "missed": [
+        "UCO",
+        "VMET"
+      ],
+      "hallucinated": [
+        "USO",
+        "VME"
+      ],
+      "n_expected": 6,
+      "n_returned": 6,
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ]
+    },
+    "video_id": "ZEniGrLxkpY",
+    "title": " 2 Stocks To BUY NOW In March 2026",
+    "config_name": "three_pass_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-haiku-4-5-20251001",
+    "id": "lt_1774793036749",
+    "timestamp": "2026-03-29T16:03:56"
+  },
+  {
+    "raw": "```json\n{\n  \"stocks\": [\n    {\n      \"ticker\": \"PLS\",\n      \"company_name\": \"Pilbara Minerals\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"ALB\",\n      \"company_name\": \"Albemarle Corporation\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"SQM\",\n      \"company_name\": \"Sigma Lithium\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"1772.HK\",\n      \"company_name\": \"Ganfeng Lithium\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"PMET\",\n      \"company_name\": \"Patriot Battery Metals\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"LAC\",\n      \"company_name\": \"Lithium Americas\",\n      \"asset_type\": \"stock\"\n    }\n  ]\n}\n```",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "PLS",
+          "company_name": "Pilbara Minerals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ALB",
+          "company_name": "Albemarle Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SQM",
+          "company_name": "Sigma Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "1772.HK",
+          "company_name": "Ganfeng Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "PMET",
+          "company_name": "Patriot Battery Metals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "LAC",
+          "company_name": "Lithium Americas",
+          "asset_type": "stock"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 9116,
+      "output_tokens": 262,
+      "cost_usd": 0.008341
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.267,
+      "f1": 0.381,
+      "f2": 0.303,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": null,
+      "quality_pts": 24,
+      "quality_max": 134,
+      "quality_display": "24/134",
+      "found": [
+        "ALB",
+        "LAC",
+        "PLS",
+        "PMET"
+      ],
+      "missed": [
+        "002460",
+        "CXO",
+        "GRAPHITE",
+        "LAR",
+        "LITHIUM",
+        "LLL",
+        "NICKEL",
+        "RIO",
+        "SGML",
+        "SLI",
+        "VUL"
+      ],
+      "hallucinated": [
+        "1772.HK",
+        "SQM"
+      ],
+      "n_expected": 15,
+      "n_returned": 6,
+      "ticker_details": [
+        {
+          "ticker": "002460",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ALB",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "CXO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "GRAPHITE",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAC",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAR",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LITHIUM",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LLL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NICKEL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PLS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PMET",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "RIO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SGML",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SLI",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "VUL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        }
+      ]
+    },
+    "video_id": "PnU4r8COR-U",
+    "title": "A once-in-a-century opportunity: LITHIUM stocks?",
+    "config_name": "three_pass_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-haiku-4-5-20251001",
+    "id": "lt_1774793055728",
+    "timestamp": "2026-03-29T16:04:15"
+  },
+  {
+    "raw": "```json\n{\n  \"stocks\": [\n    {\n      \"ticker\": \"PLS\",\n      \"company_name\": \"Pilbara Minerals\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"ALB\",\n      \"company_name\": \"Albemarle Corporation\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"SQM\",\n      \"company_name\": \"Sigma Lithium\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"GFI\",\n      \"company_name\": \"Gangfeng Lithium\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"PMET\",\n      \"company_name\": \"Patriot Battery Metals\",\n      \"asset_type\": \"stock\"\n    },\n    {\n      \"ticker\": \"LAC\",\n      \"company_name\": \"Lithium Americas\",\n      \"asset_type\": \"stock\"\n    }\n  ]\n}\n```",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "PLS",
+          "company_name": "Pilbara Minerals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ALB",
+          "company_name": "Albemarle Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SQM",
+          "company_name": "Sigma Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GFI",
+          "company_name": "Gangfeng Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "PMET",
+          "company_name": "Patriot Battery Metals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "LAC",
+          "company_name": "Lithium Americas",
+          "asset_type": "stock"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 9116,
+      "output_tokens": 260,
+      "cost_usd": 0.008333
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.267,
+      "f1": 0.381,
+      "f2": 0.303,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": null,
+      "quality_pts": 24,
+      "quality_max": 134,
+      "quality_display": "24/134",
+      "found": [
+        "ALB",
+        "LAC",
+        "PLS",
+        "PMET"
+      ],
+      "missed": [
+        "002460",
+        "CXO",
+        "GRAPHITE",
+        "LAR",
+        "LITHIUM",
+        "LLL",
+        "NICKEL",
+        "RIO",
+        "SGML",
+        "SLI",
+        "VUL"
+      ],
+      "hallucinated": [
+        "GFI",
+        "SQM"
+      ],
+      "n_expected": 15,
+      "n_returned": 6,
+      "ticker_details": [
+        {
+          "ticker": "002460",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ALB",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "CXO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "GRAPHITE",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAC",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAR",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LITHIUM",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LLL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NICKEL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PLS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PMET",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "RIO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SGML",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SLI",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "VUL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        }
+      ]
+    },
+    "video_id": "PnU4r8COR-U",
+    "title": "A once-in-a-century opportunity: LITHIUM stocks?",
+    "config_name": "two_pass_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-haiku-4-5-20251001",
+    "id": "lt_1774793084010",
+    "timestamp": "2026-03-29T16:04:44"
+  },
+  {
+    "raw": "```json\n{\"stocks\": [{\"ticker\": \"PLS.AX\", \"company_name\": \"Pilbara Minerals\", \"asset_type\": \"stock\"}, {\"ticker\": \"ALB\", \"company_name\": \"Albemarle Corporation\", \"asset_type\": \"stock\"}, {\"ticker\": \"SGML\", \"company_name\": \"Sigma Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"GNENF\", \"company_name\": \"Ganfeng Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"PMETF\", \"company_name\": \"Patriot Battery Metals\", \"asset_type\": \"stock\"}, {\"ticker\": \"LAC\", \"company_name\": \"Lithium Americas\", \"asset_type\": \"stock\"}, {\"ticker\": \"SLI\", \"company_name\": \"Standard Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"CXO.AX\", \"company_name\": \"Core Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"RIO\", \"company_name\": \"Rio Tinto\", \"asset_type\": \"stock\"}, {\"ticker\": \"VUL.DE\", \"company_name\": \"Vulcan Energy Resources\", \"asset_type\": \"stock\"}, {\"ticker\": \"LIO.V\", \"company_name\": \"Leo Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"GM\", \"company_name\": \"General Motors\", \"asset_type\": \"stock\"}, {\"ticker\": \"BYDDY\", \"company_name\": \"BYD Company\", \"asset_type\": \"stock\"}]}\n```",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "PLS.AX",
+          "company_name": "Pilbara Minerals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ALB",
+          "company_name": "Albemarle Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SGML",
+          "company_name": "Sigma Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GNENF",
+          "company_name": "Ganfeng Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "PMETF",
+          "company_name": "Patriot Battery Metals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "LAC",
+          "company_name": "Lithium Americas",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SLI",
+          "company_name": "Standard Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "CXO.AX",
+          "company_name": "Core Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "RIO",
+          "company_name": "Rio Tinto",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "VUL.DE",
+          "company_name": "Vulcan Energy Resources",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "LIO.V",
+          "company_name": "Leo Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GM",
+          "company_name": "General Motors",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "BYDDY",
+          "company_name": "BYD Company",
+          "asset_type": "stock"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 9117,
+      "output_tokens": 390,
+      "cost_usd": 0.055335
+    },
+    "scores": {
+      "precision": 0.385,
+      "recall": 0.333,
+      "f1": 0.357,
+      "f2": 0.342,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": null,
+      "quality_pts": 30,
+      "quality_max": 134,
+      "quality_display": "30/134",
+      "found": [
+        "ALB",
+        "LAC",
+        "RIO",
+        "SGML",
+        "SLI"
+      ],
+      "missed": [
+        "002460",
+        "CXO",
+        "GRAPHITE",
+        "LAR",
+        "LITHIUM",
+        "LLL",
+        "NICKEL",
+        "PLS",
+        "PMET",
+        "VUL"
+      ],
+      "hallucinated": [
+        "BYDDY",
+        "CXO.AX",
+        "GM",
+        "GNENF",
+        "LIO.V",
+        "PLS.AX",
+        "PMETF",
+        "VUL.DE"
+      ],
+      "n_expected": 15,
+      "n_returned": 13,
+      "ticker_details": [
+        {
+          "ticker": "002460",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ALB",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "CXO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "GRAPHITE",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAC",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAR",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LITHIUM",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LLL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NICKEL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PLS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "RIO",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SGML",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SLI",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "VUL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        }
+      ]
+    },
+    "video_id": "PnU4r8COR-U",
+    "title": "A once-in-a-century opportunity: LITHIUM stocks?",
+    "config_name": "three_pass_opus",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-opus-4-6",
+    "id": "lt_1774793106515",
+    "timestamp": "2026-03-29T16:05:06"
+  },
+  {
+    "raw": "{\"stocks\": [{\"ticker\": \"ZS\", \"company_name\": \"Zscaler Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"MOS\", \"company_name\": \"The Mosaic Company\", \"asset_type\": \"stock\"}, {\"ticker\": \"VME\", \"company_name\": \"VersaMe Royalties Corp\", \"asset_type\": \"stock\"}, {\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"SLV\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"USO\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"CPER\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"CRM\", \"company_name\": \"Salesforce Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"MSFT\", \"company_name\": \"Microsoft Corporation\", \"asset_type\": \"stock\"}, {\"ticker\": \"WDAY\", \"company_name\": \"Workday Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"AMZN\", \"company_name\": \"Amazon.com Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"SYK\", \"company_name\": \"Stryker Corporation\", \"asset_type\": \"stock\"}, {\"ticker\": \"FNV\", \"company_name\": \"Franco-Nevada Corporation\", \"asset_type\": \"stock\"}, {\"ticker\": \"WPM\", \"company_name\": \"Wheaton Precious Metals Corp.\", \"asset_type\": \"stock\"}, {\"ticker\": \"RGLD\", \"company_name\": \"Royal Gold Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"BTG\", \"company_name\": \"B2Gold Corp.\", \"asset_type\": \"stock\"}, {\"ticker\": \"EQX\", \"company_name\": \"Equinox Gold Corp.\", \"asset_type\": \"stock\"}, {\"ticker\": \"SAND\", \"company_name\": \"Sandstorm Gold Ltd.\", \"asset_type\": \"stock\"}, {\"ticker\": \"EXK\", \"company_name\": \"Endeavour Silver Corp.\", \"asset_type\": \"stock\"}]}",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "ZS",
+          "company_name": "Zscaler Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "MOS",
+          "company_name": "The Mosaic Company",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "VME",
+          "company_name": "VersaMe Royalties Corp",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GLD",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "SLV",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "USO",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "CPER",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "CRM",
+          "company_name": "Salesforce Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "MSFT",
+          "company_name": "Microsoft Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "WDAY",
+          "company_name": "Workday Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "AMZN",
+          "company_name": "Amazon.com Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SYK",
+          "company_name": "Stryker Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "FNV",
+          "company_name": "Franco-Nevada Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "WPM",
+          "company_name": "Wheaton Precious Metals Corp.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "RGLD",
+          "company_name": "Royal Gold Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "BTG",
+          "company_name": "B2Gold Corp.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "EQX",
+          "company_name": "Equinox Gold Corp.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SAND",
+          "company_name": "Sandstorm Gold Ltd.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "EXK",
+          "company_name": "Endeavour Silver Corp.",
+          "asset_type": "stock"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 5258,
+      "output_tokens": 533,
+      "cost_usd": 0.039615
+    },
+    "scores": {
+      "precision": 0.211,
+      "recall": 0.667,
+      "f1": 0.32,
+      "f2": 0.465,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": 0.0,
+      "quality_pts": 24,
+      "quality_max": 60,
+      "quality_display": "24/60",
+      "found": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "ZS"
+      ],
+      "missed": [
+        "UCO",
+        "VMET"
+      ],
+      "hallucinated": [
+        "AMZN",
+        "BTG",
+        "CPER",
+        "CRM",
+        "EQX",
+        "EXK",
+        "FNV",
+        "MSFT",
+        "RGLD",
+        "SAND",
+        "SYK",
+        "USO",
+        "VME",
+        "WDAY",
+        "WPM"
+      ],
+      "n_expected": 6,
+      "n_returned": 19,
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ]
+    },
+    "video_id": "ZEniGrLxkpY",
+    "title": " 2 Stocks To BUY NOW In March 2026",
+    "config_name": "three_pass_opus",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-opus-4-6",
+    "id": "lt_1774793120709",
+    "timestamp": "2026-03-29T16:05:20"
+  },
+  {
+    "raw": "{\"stocks\": [{\"ticker\": \"ZS\", \"company_name\": \"Zscaler Inc.\", \"asset_type\": \"stock\"}, {\"ticker\": \"MOS\", \"company_name\": \"The Mosaic Company\", \"asset_type\": \"stock\"}, {\"ticker\": \"VME\", \"company_name\": \"VersaMet Royalties Corp.\", \"asset_type\": \"stock\"}, {\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"SLV\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}, {\"ticker\": \"USO\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}]}",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "ZS",
+          "company_name": "Zscaler Inc.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "MOS",
+          "company_name": "The Mosaic Company",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "VME",
+          "company_name": "VersaMet Royalties Corp.",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "GLD",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "SLV",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        },
+        {
+          "ticker": "USO",
+          "company_name": "NULL",
+          "asset_type": "commodity"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 5258,
+      "output_tokens": 167,
+      "cost_usd": 0.018279
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.667,
+      "f1": 0.667,
+      "f2": 0.667,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": 0.0,
+      "quality_pts": 24,
+      "quality_max": 60,
+      "quality_display": "24/60",
+      "found": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "ZS"
+      ],
+      "missed": [
+        "UCO",
+        "VMET"
+      ],
+      "hallucinated": [
+        "USO",
+        "VME"
+      ],
+      "n_expected": 6,
+      "n_returned": 6,
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ]
+    },
+    "video_id": "ZEniGrLxkpY",
+    "title": " 2 Stocks To BUY NOW In March 2026",
+    "config_name": "two_pass_sonnet_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-sonnet-4-6",
+    "id": "lt_1774793158364",
+    "timestamp": "2026-03-29T16:05:58"
+  },
+  {
+    "raw": "{\"stocks\": [{\"ticker\": \"PLS.AX\", \"company_name\": \"Pilbara Minerals\", \"asset_type\": \"stock\"}, {\"ticker\": \"ALB\", \"company_name\": \"Albemarle Corporation\", \"asset_type\": \"stock\"}, {\"ticker\": \"SGML\", \"company_name\": \"Sigma Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"1772.HK\", \"company_name\": \"Ganfeng Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"PMET\", \"company_name\": \"Patriot Battery Metals\", \"asset_type\": \"stock\"}, {\"ticker\": \"LAC\", \"company_name\": \"Lithium Americas\", \"asset_type\": \"stock\"}, {\"ticker\": \"RIO\", \"company_name\": \"Rio Tinto\", \"asset_type\": \"stock\"}, {\"ticker\": \"SLI\", \"company_name\": \"Standard Lithium\", \"asset_type\": \"stock\"}, {\"ticker\": \"CXO.AX\", \"company_name\": \"Core Lithium\", \"asset_type\": \"stock\"}]}",
+    "parsed": {
+      "stocks": [
+        {
+          "ticker": "PLS.AX",
+          "company_name": "Pilbara Minerals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "ALB",
+          "company_name": "Albemarle Corporation",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SGML",
+          "company_name": "Sigma Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "1772.HK",
+          "company_name": "Ganfeng Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "PMET",
+          "company_name": "Patriot Battery Metals",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "LAC",
+          "company_name": "Lithium Americas",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "RIO",
+          "company_name": "Rio Tinto",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "SLI",
+          "company_name": "Standard Lithium",
+          "asset_type": "stock"
+        },
+        {
+          "ticker": "CXO.AX",
+          "company_name": "Core Lithium",
+          "asset_type": "stock"
+        }
+      ]
+    },
+    "output_type": "stock_list",
+    "usage": {
+      "input_tokens": 9117,
+      "output_tokens": 272,
+      "cost_usd": 0.031431
+    },
+    "scores": {
+      "precision": 0.667,
+      "recall": 0.4,
+      "f1": 0.5,
+      "f2": 0.435,
+      "sentiment_acc": 0.0,
+      "rec_acc": 0.0,
+      "confidence_acc": null,
+      "quality_pts": 36,
+      "quality_max": 134,
+      "quality_display": "36/134",
+      "found": [
+        "ALB",
+        "LAC",
+        "PMET",
+        "RIO",
+        "SGML",
+        "SLI"
+      ],
+      "missed": [
+        "002460",
+        "CXO",
+        "GRAPHITE",
+        "LAR",
+        "LITHIUM",
+        "LLL",
+        "NICKEL",
+        "PLS",
+        "VUL"
+      ],
+      "hallucinated": [
+        "1772.HK",
+        "CXO.AX",
+        "PLS.AX"
+      ],
+      "n_expected": 15,
+      "n_returned": 9,
+      "ticker_details": [
+        {
+          "ticker": "002460",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ALB",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "CXO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "GRAPHITE",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAC",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LAR",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LITHIUM",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "LLL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NICKEL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PLS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PMET",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "RIO",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SGML",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SLI",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "VUL",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        }
+      ]
+    },
+    "video_id": "PnU4r8COR-U",
+    "title": "A once-in-a-century opportunity: LITHIUM stocks?",
+    "config_name": "two_pass_sonnet_haiku",
+    "pass_id": "pass1",
+    "pass_label": "Discovery",
+    "pass_role": "discovery",
+    "model": "claude-sonnet-4-6",
+    "id": "lt_1774793176691",
+    "timestamp": "2026-03-29T16:06:16"
+  }
+]

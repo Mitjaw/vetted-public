@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Leads{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Leads</h1>
+  <p>Stocks mentioned by channels with ≥60% pick accuracy (min 15 settled picks).</p>
+</div>
+
+{% if not high_acc_channels %}
+<div class="card">
+  <p style="color:var(--muted);">No channels have enough settled picks yet to qualify (min 15 buy recs with 30d ROI). Check back once more data has been collected.</p>
+</div>
+{% else %}
+
+<div style="margin-bottom:20px;font-size:12px;color:var(--muted);">
+  Qualifying channels:
+  {% for ch in high_acc_channels %}
+  <span style="color:var(--text);margin-left:8px;">{{ ch.name }} <span style="color:var(--green);">{{ ch.accuracy }}%</span></span>{% if not loop.last %},{% endif %}
+  {% endfor %}
+</div>
+
+{% if fresh %}
+<div class="card" style="margin-bottom:24px;">
+  <div class="section-header">
+    <h2>Fresh leads <span style="font-size:11px;color:var(--muted);font-weight:400;">(mentioned in last 30d, ROI pending)</span></h2>
+    <span style="font-size:12px;color:var(--muted);">{{ fresh|length }}</span>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th>Sentiment</th>
+          <th>Channel</th>
+          <th class="num">Channel acc.</th>
+          <th class="num">Days ago</th>
+          <th class="num">Conf</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in fresh %}
+        <tr style="cursor:pointer;" onclick="location.href='/stocks/{{ r.ticker }}'">
+          <td><span style="font-weight:600;">{{ r.ticker }}</span></td>
+          <td style="color:var(--muted);font-size:12px;">{{ r.company_name or '—' }}</td>
+          <td><span class="badge badge-{{ 'bull' if r.sentiment == 'bullish' else ('bear' if r.sentiment == 'bearish' else 'neut') }}">{{ r.sentiment }}</span></td>
+          <td><a href="/channels/{{ r.channel_id }}" style="font-size:12px;">{{ r.channel_name }}</a></td>
+          <td class="num">
+            {% if r.channel_accuracy is not none %}
+              <span class="roi-pos">{{ r.channel_accuracy }}%</span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="num" style="color:var(--muted);">{{ r.days_ago }}d</td>
+          <td class="num" style="color:var(--muted);">{{ '%.0f'|format((r.confidence or 0) * 100) }}%</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% if validated %}
+<div class="card">
+  <div class="section-header">
+    <h2>Validated picks <span style="font-size:11px;color:var(--muted);font-weight:400;">(>30d old, ROI settled)</span></h2>
+    <span style="font-size:12px;color:var(--muted);">{{ validated|length }}</span>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th>Sentiment</th>
+          <th>Channel</th>
+          <th class="num">Channel acc.</th>
+          <th class="num">ROI 7d</th>
+          <th class="num">ROI 30d</th>
+          <th class="num">Days ago</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in validated %}
+        <tr style="cursor:pointer;" onclick="location.href='/stocks/{{ r.ticker }}'">
+          <td><span style="font-weight:600;">{{ r.ticker }}</span></td>
+          <td style="color:var(--muted);font-size:12px;">{{ r.company_name or '—' }}</td>
+          <td><span class="badge badge-{{ 'bull' if r.sentiment == 'bullish' else ('bear' if r.sentiment == 'bearish' else 'neut') }}">{{ r.sentiment }}</span></td>
+          <td><a href="/channels/{{ r.channel_id }}" style="font-size:12px;">{{ r.channel_name }}</a></td>
+          <td class="num">
+            {% if r.channel_accuracy is not none %}
+              <span class="roi-pos">{{ r.channel_accuracy }}%</span>
+            {% else %}—{% endif %}
+          </td>
+          <td class="num">
+            {% if r.roi_7d is not none %}
+              <span class="{{ 'roi-pos' if r.roi_7d >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(r.roi_7d) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td class="num">
+            {% if r.roi_30d is not none %}
+              <span class="{{ 'roi-pos' if r.roi_30d >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(r.roi_30d) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td class="num" style="color:var(--muted);">{{ r.days_ago }}d</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% endif %}
+{% endblock %}

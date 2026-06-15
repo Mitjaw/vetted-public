@@ -1,0 +1,108 @@
+{
+  "two_pass_haiku": [
+    {
+      "version": 1,
+      "hash": "11e8b1a3dba2",
+      "created": "2026-03-16T17:42:16.054508"
+    }
+  ],
+  "single_pass_haiku": [
+    {
+      "version": 1,
+      "hash": "5388fc74b8cd",
+      "created": "2026-03-16T19:27:07.195571"
+    }
+  ],
+  "two_pass_sonnet": [
+    {
+      "version": 1,
+      "hash": "09163f62bce4",
+      "created": "2026-03-16T19:55:25.828850"
+    },
+    {
+      "version": 2,
+      "hash": "3cebea5851f8",
+      "created": "2026-03-16T21:41:32.449669"
+    }
+  ],
+  "haiku_discover_sonnet_analyze": [
+    {
+      "version": 1,
+      "hash": "3bdb3c1e644b",
+      "created": "2026-03-16T19:55:27.512401"
+    },
+    {
+      "version": 2,
+      "hash": "455db4958118",
+      "created": "2026-03-22T17:46:10.448693"
+    }
+  ],
+  "two_pass_opus": [
+    {
+      "version": 1,
+      "hash": "9222a0342979",
+      "created": "2026-03-16T20:55:10.424335"
+    }
+  ],
+  "single_pass_opus": [
+    {
+      "version": 1,
+      "hash": "509088a3e76d",
+      "created": "2026-03-16T20:58:06.095781"
+    }
+  ],
+  "three_pass_haiku": [
+    {
+      "version": 1,
+      "hash": "a26f8dae6f38",
+      "created": "2026-03-16T21:10:23.712641"
+    }
+  ],
+  "haiku_calibrated": [
+    {
+      "version": 1,
+      "hash": "b4d2d24be581",
+      "created": "2026-03-16T21:24:06.756887"
+    },
+    {
+      "version": 2,
+      "hash": "1cca2db99a11",
+      "created": "2026-03-22T17:46:53.345444"
+    }
+  ],
+  "two_pass_haiku_sonnet": [
+    {
+      "version": 1,
+      "hash": "d45c1eb25a72",
+      "created": "2026-03-16T21:27:30.428699"
+    }
+  ],
+  "two_pass_sonnet_haiku": [
+    {
+      "version": 1,
+      "hash": "f13c4a21e521",
+      "created": "2026-03-16T21:27:30.924601"
+    }
+  ],
+  "dual_discovery_haiku": [
+    {
+      "version": 1,
+      "hash": "919f5a222243",
+      "created": "2026-03-22T15:17:55.409534"
+    }
+  ],
+  "haiku_temp_zero": [
+    {
+      "version": 1,
+      "hash": "5794e2298dd9",
+      "created": "2026-03-22T17:47:22.574198"
+    }
+  ],
+  "haiku_structured_context": [
+    {
+      "version": 1,
+      "hash": "4fd1ebecaefa",
+      "created": "2026-03-22T17:48:04.521053"
+    }
+  ]
+}

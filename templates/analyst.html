@@ -1,0 +1,446 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Analyst{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Analyst</h1>
+  <p>Full-control view — filter, slice, and visualize every mention in the database.</p>
+</div>
+
+<!-- Filter Panel -->
+<form id="analyst-form" method="GET" action="/analyst">
+  <input type="hidden" name="table_mode" value="{{ table_mode }}">
+  <input type="hidden" name="chart_mode" value="{{ chart_mode }}">
+  <input type="hidden" id="channels_filter" name="channels_filter" value="{{ channels_filter }}">
+  <input type="hidden" id="lang_filter" name="lang_filter" value="{{ lang_filter }}">
+
+  <div class="card section" style="padding:16px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div class="card-title" style="margin:0;">Filters</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:12px;color:var(--text-muted);">{{ row_count }} row{% if row_count != 1 %}s{% endif %} matched</span>
+        <button type="button" onclick="resetFilters()" class="btn btn-secondary" style="font-size:12px;padding:5px 12px;">Reset</button>
+        <button type="submit" class="btn btn-primary" style="font-size:12px;padding:5px 14px;">Apply Filters</button>
+      </div>
+    </div>
+
+    <!-- Row 1: Date, Tickers, Confidence -->
+    <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-end;">
+      <div class="form-group">
+        <label>Date From</label>
+        <input type="date" name="date_from" value="{{ date_from }}" style="width:140px;">
+      </div>
+      <div class="form-group">
+        <label>Date To</label>
+        <input type="date" name="date_to" value="{{ date_to }}" style="width:140px;">
+      </div>
+      <div class="form-group">
+        <label>Tickers (comma-separated)</label>
+        <input type="text" name="tickers_filter" value="{{ tickers_filter }}" placeholder="AAPL, NVDA, TSLA" style="width:200px;">
+      </div>
+      <div class="form-group">
+        <label>Min Confidence (%)</label>
+        <input type="number" name="min_confidence" value="{{ min_confidence }}" min="0" max="100" step="5" style="width:90px;">
+      </div>
+    </div>
+
+    <!-- Row 2: Sentiment, Recommendation, Language -->
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-bottom:14px;align-items:flex-start;">
+
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Sentiment</div>
+        <div style="display:flex;gap:4px;">
+          {% for label, val in [('All','all'),('Bullish','bullish'),('Bearish','bearish'),('Neutral','neutral')] %}
+          <label style="cursor:pointer;">
+            <input type="radio" name="sentiment" value="{{ val }}" {% if sentiment == val %}checked{% endif %} style="display:none;" onchange="this.closest('form').submit()">
+            <span style="display:inline-block;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;
+              {% if sentiment == val %}background:var(--accent);color:#fff;border:1px solid var(--accent);
+              {% else %}background:var(--bg-raised);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+              {{ label }}
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Recommendation</div>
+        <div style="display:flex;gap:4px;">
+          {% for label, val in [('All','all'),('Buy','buy'),('Sell','sell'),('Hold','hold'),('Reference','reference')] %}
+          <label style="cursor:pointer;">
+            <input type="radio" name="recommendation" value="{{ val }}" {% if recommendation == val %}checked{% endif %} style="display:none;" onchange="this.closest('form').submit()">
+            <span style="display:inline-block;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;
+              {% if recommendation == val %}background:var(--accent);color:#fff;border:1px solid var(--accent);
+              {% else %}background:var(--bg-raised);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+              {{ label }}
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:6px;">Language</div>
+        <div style="display:flex;gap:4px;">
+          {% for label, val in [('EN','en'),('DE','de'),('ES','es')] %}
+          <label style="cursor:pointer;">
+            <input type="checkbox" class="lang-cb" value="{{ val }}"
+              {% if val in lang_filter.split(',') %}checked{% endif %} style="display:none;">
+            <span class="lang-cb-label" data-val="{{ val }}" style="display:inline-block;padding:4px 10px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;
+              {% if val in lang_filter.split(',') %}background:var(--accent);color:#fff;border:1px solid var(--accent);
+              {% else %}background:var(--bg-raised);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+              {{ label }}
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Row 3: Channel selector -->
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;">Channels</div>
+        <div style="display:flex;gap:6px;">
+          <button type="button" onclick="selectChannels('all')" style="font-size:11px;color:var(--accent-hl);background:none;border:none;cursor:pointer;padding:0;">All</button>
+          <button type="button" onclick="selectChannels('none')" style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0;">None</button>
+          <span style="color:var(--border);">|</span>
+          <button type="button" onclick="selectChannels('en')" style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0;">EN only</button>
+          <button type="button" onclick="selectChannels('de')" style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0;">DE only</button>
+          <button type="button" onclick="selectChannels('es')" style="font-size:11px;color:var(--text-muted);background:none;border:none;cursor:pointer;padding:0;">ES only</button>
+        </div>
+      </div>
+      <select id="channel-select" multiple style="width:100%;height:90px;background:var(--bg-raised);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:4px;font-size:12px;font-family:var(--font);">
+        {% set sel_ids = channels_filter.split(',') %}
+        {% for ch in all_channels %}
+        <option value="{{ ch.id }}" data-lang="{{ ch.language }}"
+          {% if not channels_filter or ch.id in sel_ids %}selected{% endif %}>
+          [{{ ch.language | upper }}] {{ ch.name }}
+        </option>
+        {% endfor %}
+      </select>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Hold Cmd/Ctrl to multi-select. Leave all selected to include all channels.</div>
+    </div>
+  </div>
+</form>
+
+<!-- View Mode Toggles -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:12px;">
+
+  <div style="display:flex;gap:6px;align-items:center;">
+    <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;">Table</span>
+    {% for label, val in [('By Ticker','ticker'),('By Channel','channel'),('By Date','date'),('Raw Mentions','raw')] %}
+    <button onclick="setMode('table_mode','{{ val }}')"
+      style="padding:5px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);
+             {% if table_mode == val %}background:var(--accent);color:#fff;border:1px solid var(--accent);
+             {% else %}background:var(--bg-card);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+      {{ label }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div style="display:flex;gap:6px;align-items:center;">
+    <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;">Chart</span>
+    {% for label, val in [('Timeline','timeline'),('By Channel','channel'),('ROI Scatter','scatter'),('Heatmap','heatmap')] %}
+    <button onclick="setMode('chart_mode','{{ val }}')"
+      style="padding:5px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);
+             {% if chart_mode == val %}background:var(--accent);color:#fff;border:1px solid var(--accent);
+             {% else %}background:var(--bg-card);color:var(--text-muted);border:1px solid var(--border);{% endif %}">
+      {{ label }}
+    </button>
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- Chart -->
+<div class="card section" style="padding:20px;">
+  <div id="chart-wrap">
+    {% if chart_mode == 'heatmap' %}
+    <!-- Heatmap rendered as CSS grid -->
+    {% set hm = chart_data %}
+    {% if hm.tickers and hm.channels %}
+    <div style="overflow-x:auto;">
+      <div style="display:grid;grid-template-columns:100px repeat({{ hm.channels|length }},1fr);gap:2px;min-width:600px;">
+        <!-- Header row -->
+        <div></div>
+        {% for ch in hm.channels %}
+        <div style="font-size:9px;color:var(--text-muted);text-align:center;padding:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;" title="{{ ch }}">{{ ch[:12] }}</div>
+        {% endfor %}
+        <!-- Data rows -->
+        {% for i, ticker in hm.tickers|enumerate %}
+        <div style="font-size:11px;font-weight:600;color:var(--text);padding:3px 6px;">{{ ticker }}</div>
+        {% for j in range(hm.channels|length) %}
+        {% set val = hm.matrix[i][j] if hm.matrix else 0 %}
+        <div style="height:20px;border-radius:2px;background:{% if val > 0 %}rgba(37,99,235,{{ [val * 0.15, 0.9]|min }}){% else %}var(--bg-raised){% endif %};"
+          title="{{ ticker }} × {{ hm.channels[j] }}: {{ val }}"></div>
+        {% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div style="text-align:center;color:var(--text-muted);padding:40px;">No data to display.</div>
+    {% endif %}
+    {% else %}
+    <canvas id="analyst-chart" style="max-height:300px;"></canvas>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card-title" style="margin:0;">
+      {% if table_mode == 'ticker' %}By Ticker
+      {% elif table_mode == 'channel' %}By Channel
+      {% elif table_mode == 'date' %}By Date
+      {% else %}Raw Mentions{% endif %}
+      <span style="font-weight:400;color:var(--text-muted);margin-left:8px;">{{ row_count }} rows</span>
+    </div>
+    <a href="/analyst/export?table_mode={{ table_mode }}&date_from={{ date_from }}&date_to={{ date_to }}&channels_filter={{ channels_filter }}&lang_filter={{ lang_filter }}&sentiment={{ sentiment }}&recommendation={{ recommendation }}&min_confidence={{ min_confidence }}&tickers_filter={{ tickers_filter }}"
+       class="btn btn-secondary" style="font-size:12px;padding:5px 12px;">
+      Export CSV
+    </a>
+  </div>
+
+  <div class="table-wrap">
+    {% if table_mode == 'ticker' %}
+    <table>
+      <thead><tr>
+        <th>#</th><th>Ticker</th><th>Company</th><th>Channels</th><th>Videos</th>
+        <th>Bullish%</th><th>Confidence</th><th>7d ROI</th><th>30d ROI</th><th>Sentiment</th>
+      </tr></thead>
+      <tbody>
+        {% for r in table_data %}
+        {% set tot = (r.bullish_count + r.bearish_count + r.neutral_count)|float %}
+        {% set bp = ((r.bullish_count/tot*100) if tot>0 else 0)|round(1) %}
+        {% set brp = ((r.bearish_count/tot*100) if tot>0 else 0)|round(1) %}
+        {% set np = ((r.neutral_count/tot*100) if tot>0 else 0)|round(1) %}
+        <tr>
+          <td style="color:var(--text-muted);font-size:12px;">{{ loop.index }}</td>
+          <td><a href="/stock/{{ r.ticker }}" style="font-weight:600;">{{ r.ticker }}</a></td>
+          <td style="color:var(--text-muted);font-size:12px;">{{ r.company_name or '—' }}</td>
+          <td>{% if r.channel_count >= 5 %}<span style="background:rgba(16,185,129,.18);color:var(--positive);padding:2px 7px;border-radius:4px;font-size:12px;font-weight:700;">{{ r.channel_count }}</span>
+              {% elif r.channel_count >= 3 %}<span style="background:rgba(245,158,11,.18);color:var(--neutral);padding:2px 7px;border-radius:4px;font-size:12px;font-weight:700;">{{ r.channel_count }}</span>
+              {% else %}<span style="color:var(--text-muted);">{{ r.channel_count }}</span>{% endif %}</td>
+          <td style="color:var(--text-muted);">{{ r.video_count }}</td>
+          <td style="font-weight:600;{% if bp>=60 %}color:var(--positive);{% elif bp<=30 %}color:var(--negative);{% else %}color:var(--neutral);{% endif %}">{{ bp }}%</td>
+          <td style="color:var(--text-muted);">{% if r.avg_confidence %}{{ (r.avg_confidence*100)|round(0)|int }}%{% else %}—{% endif %}</td>
+          <td class="{% if r.avg_roi_7d is not none %}{% if r.avg_roi_7d>0 %}roi-positive{% elif r.avg_roi_7d<0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if r.avg_roi_7d is not none %}{% if r.avg_roi_7d>0 %}+{% endif %}{{ r.avg_roi_7d }}%{% else %}—{% endif %}</td>
+          <td class="{% if r.avg_roi_30d is not none %}{% if r.avg_roi_30d>0 %}roi-positive{% elif r.avg_roi_30d<0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if r.avg_roi_30d is not none %}{% if r.avg_roi_30d>0 %}+{% endif %}{{ r.avg_roi_30d }}%{% else %}—{% endif %}</td>
+          <td><div class="sentiment-bar" style="min-width:60px;">
+            {% if bp>0 %}<div class="seg-bullish" style="width:{{ bp }}%;"></div>{% endif %}
+            {% if brp>0 %}<div class="seg-bearish" style="width:{{ brp }}%;"></div>{% endif %}
+            {% if np>0 %}<div class="seg-neutral" style="width:{{ np }}%;"></div>{% endif %}
+          </div></td>
+        </tr>
+        {% else %}<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:32px;">No data matches these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% elif table_mode == 'channel' %}
+    <table>
+      <thead><tr>
+        <th>#</th><th>Channel</th><th>Lang</th><th>Videos</th><th>Tickers</th>
+        <th>Buy Picks</th><th>Accuracy</th><th>Bullish</th><th>Bearish</th><th>Avg 30d ROI</th>
+      </tr></thead>
+      <tbody>
+        {% for r in table_data %}
+        <tr>
+          <td style="color:var(--text-muted);font-size:12px;">{{ loop.index }}</td>
+          <td><a href="/channel/{{ r.id }}">{{ r.channel_name }}</a></td>
+          <td><span class="lang-badge">{{ r.language|upper }}</span></td>
+          <td style="color:var(--text-muted);">{{ r.video_count }}</td>
+          <td style="color:var(--text-muted);">{{ r.tickers_mentioned }}</td>
+          <td>{{ r.buy_picks }}</td>
+          <td>{% if r.accuracy is not none %}<span style="font-weight:600;color:{% if r.accuracy>=60 %}var(--positive){% elif r.accuracy<40 %}var(--negative){% else %}var(--neutral){% endif %};">{{ r.accuracy }}%</span>{% else %}<span style="color:var(--text-muted);">Pending</span>{% endif %}</td>
+          <td style="color:var(--positive);">{{ r.bullish_count }}</td>
+          <td style="color:var(--negative);">{{ r.bearish_count }}</td>
+          <td class="{% if r.avg_roi_30d is not none %}{% if r.avg_roi_30d>0 %}roi-positive{% elif r.avg_roi_30d<0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if r.avg_roi_30d is not none %}{% if r.avg_roi_30d>0 %}+{% endif %}{{ r.avg_roi_30d }}%{% else %}—{% endif %}</td>
+        </tr>
+        {% else %}<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:32px;">No data matches these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% elif table_mode == 'date' %}
+    <table>
+      <thead><tr>
+        <th>Date</th><th>Videos</th><th>Tickers</th><th>Channels</th><th>Bullish</th><th>Bearish</th><th>Neutral</th><th>Sentiment</th>
+      </tr></thead>
+      <tbody>
+        {% for r in table_data %}
+        {% set tot = (r.bullish_count + r.bearish_count + r.neutral_count)|float %}
+        {% set bp = ((r.bullish_count/tot*100) if tot>0 else 0)|round(1) %}
+        {% set brp = ((r.bearish_count/tot*100) if tot>0 else 0)|round(1) %}
+        {% set np = ((r.neutral_count/tot*100) if tot>0 else 0)|round(1) %}
+        <tr>
+          <td style="font-weight:600;">{{ r.date }}</td>
+          <td style="color:var(--text-muted);">{{ r.video_count }}</td>
+          <td style="color:var(--text-muted);">{{ r.ticker_count }}</td>
+          <td style="color:var(--text-muted);">{{ r.channel_count }}</td>
+          <td style="color:var(--positive);">{{ r.bullish_count }}</td>
+          <td style="color:var(--negative);">{{ r.bearish_count }}</td>
+          <td style="color:var(--neutral);">{{ r.neutral_count }}</td>
+          <td><div class="sentiment-bar" style="min-width:60px;">
+            {% if bp>0 %}<div class="seg-bullish" style="width:{{ bp }}%;"></div>{% endif %}
+            {% if brp>0 %}<div class="seg-bearish" style="width:{{ brp }}%;"></div>{% endif %}
+            {% if np>0 %}<div class="seg-neutral" style="width:{{ np }}%;"></div>{% endif %}
+          </div></td>
+        </tr>
+        {% else %}<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:32px;">No data matches these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {% else %}{# raw #}
+    <table>
+      <thead><tr>
+        <th>Date</th><th>Ticker</th><th>Channel</th><th>Lang</th><th>Sentiment</th>
+        <th>Confidence</th><th>Rec</th><th>7d ROI</th><th>30d ROI</th><th>Context</th>
+      </tr></thead>
+      <tbody>
+        {% for r in table_data %}
+        <tr>
+          <td style="color:var(--text-muted);font-size:12px;white-space:nowrap;">{{ r.upload_date }}</td>
+          <td><a href="/stock/{{ r.ticker }}" style="font-weight:600;">{{ r.ticker }}</a></td>
+          <td style="font-size:12px;">{{ r.channel_name }}</td>
+          <td><span class="lang-badge">{{ r.language|upper }}</span></td>
+          <td><span class="badge {{ r.sentiment }}">{{ r.sentiment }}</span></td>
+          <td style="color:var(--text-muted);">{% if r.confidence_pct %}{{ r.confidence_pct|round(0)|int }}%{% else %}—{% endif %}</td>
+          <td style="color:var(--text-muted);font-size:11px;text-transform:capitalize;">{{ r.recommendation or '—' }}</td>
+          <td class="{% if r.roi_7d is not none %}{% if r.roi_7d>0 %}roi-positive{% elif r.roi_7d<0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if r.roi_7d is not none %}{% if r.roi_7d>0 %}+{% endif %}{{ r.roi_7d }}%{% else %}—{% endif %}</td>
+          <td class="{% if r.roi_30d is not none %}{% if r.roi_30d>0 %}roi-positive{% elif r.roi_30d<0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if r.roi_30d is not none %}{% if r.roi_30d>0 %}+{% endif %}{{ r.roi_30d }}%{% else %}—{% endif %}</td>
+          <td style="font-size:11px;color:var(--text-muted);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="{{ r.context or '' }}">
+            {{ (r.context or '—')[:80] }}{% if r.context and r.context|length > 80 %}…{% endif %}
+          </td>
+        </tr>
+        {% else %}<tr><td colspan="10" style="text-align:center;color:var(--text-muted);padding:32px;">No data matches these filters.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function() {
+  // Filter form: collect channel selections and language into hidden fields before submit
+  const form = document.getElementById('analyst-form');
+  form.addEventListener('submit', function() {
+    const select = document.getElementById('channel-select');
+    const allOpts = Array.from(select.options);
+    const selectedOpts = allOpts.filter(o => o.selected);
+    // If all are selected, send empty string (= no filter = all)
+    if (selectedOpts.length === allOpts.length) {
+      document.getElementById('channels_filter').value = '';
+    } else {
+      document.getElementById('channels_filter').value = selectedOpts.map(o => o.value).join(',');
+    }
+    // Language checkboxes
+    const langs = Array.from(document.querySelectorAll('.lang-cb:checked')).map(i => i.value);
+    document.getElementById('lang_filter').value = langs.join(',');
+  });
+
+  // Language toggle pills
+  document.querySelectorAll('.lang-cb-label').forEach(function(label) {
+    label.addEventListener('click', function() {
+      const val = this.dataset.val;
+      const cb = document.querySelector('.lang-cb[value="' + val + '"]');
+      cb.checked = !cb.checked;
+      this.style.background = cb.checked ? 'var(--accent)' : 'var(--bg-raised)';
+      this.style.color = cb.checked ? '#fff' : 'var(--text-muted)';
+      this.style.borderColor = cb.checked ? 'var(--accent)' : 'var(--border)';
+    });
+  });
+
+  // Channel quick-select helpers
+  window.selectChannels = function(mode) {
+    const select = document.getElementById('channel-select');
+    Array.from(select.options).forEach(function(opt) {
+      if (mode === 'all') opt.selected = true;
+      else if (mode === 'none') opt.selected = false;
+      else opt.selected = opt.dataset.lang === mode;
+    });
+  };
+
+  // Mode switching (table_mode / chart_mode) preserves all other params
+  window.setMode = function(key, value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    window.location.href = url.toString();
+  };
+
+  // Reset all filters
+  window.resetFilters = function() {
+    window.location.href = '/analyst';
+  };
+
+  // Render chart (skip for heatmap — server-rendered)
+  {% if chart_mode != 'heatmap' %}
+  const chartData = {{ chart_data | tojson }};
+  const ctx = document.getElementById('analyst-chart');
+  if (ctx && chartData) {
+    const opts = {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#e5e5e5' } } },
+      scales: {
+        x: { ticks: { color: '#737373', maxRotation: 60, autoSkip: true }, grid: { color: '#1c1c1c' } },
+        y: { ticks: { color: '#737373' }, grid: { color: '#1c1c1c' }, beginAtZero: true }
+      }
+    };
+
+    {% if chart_mode == 'timeline' %}
+    new Chart(ctx, { type: 'bar', data: {
+      labels: chartData.labels,
+      datasets: [
+        { label: 'Bullish', data: chartData.bullish, backgroundColor: 'rgba(34,197,94,0.7)', stack: 's' },
+        { label: 'Bearish', data: chartData.bearish, backgroundColor: 'rgba(239,68,68,0.7)', stack: 's' },
+        { label: 'Neutral', data: chartData.neutral, backgroundColor: 'rgba(234,179,8,0.5)', stack: 's' },
+      ]
+    }, options: Object.assign({}, opts, { scales: Object.assign({}, opts.scales, { x: Object.assign({}, opts.scales.x, { stacked: true }), y: Object.assign({}, opts.scales.y, { stacked: true }) }) }) });
+
+    {% elif chart_mode == 'channel' %}
+    new Chart(ctx, { type: 'bar', data: {
+      labels: chartData.labels,
+      datasets: [
+        { label: 'Bullish Mentions', data: chartData.bullish, backgroundColor: 'rgba(34,197,94,0.7)' },
+        { label: 'Bearish Mentions', data: chartData.bearish, backgroundColor: 'rgba(239,68,68,0.7)' },
+        { label: 'Buy Picks', data: chartData.buy_picks, backgroundColor: 'rgba(59,130,246,0.8)' },
+      ]
+    }, options: opts });
+
+    {% elif chart_mode == 'scatter' %}
+    const colorMap = { bullish: 'rgba(34,197,94,0.7)', bearish: 'rgba(239,68,68,0.7)', neutral: 'rgba(234,179,8,0.7)' };
+    const points = (chartData.points || []);
+    const datasets = ['bullish', 'bearish', 'neutral'].map(function(sent) {
+      return {
+        label: sent.charAt(0).toUpperCase() + sent.slice(1),
+        data: points.filter(p => p.sentiment === sent).map(p => ({ x: p.confidence_pct, y: p.roi_30d, label: p.ticker })),
+        backgroundColor: colorMap[sent],
+        pointRadius: 6,
+      };
+    });
+    new Chart(ctx, { type: 'scatter', data: { datasets: datasets }, options: Object.assign({}, opts, {
+      plugins: Object.assign({}, opts.plugins, {
+        tooltip: { callbacks: { label: function(ctx) {
+          return ctx.raw.label + '  conf:' + ctx.raw.x + '%  30d ROI:' + (ctx.raw.y > 0 ? '+' : '') + ctx.raw.y + '%';
+        }}}
+      }),
+      scales: { x: Object.assign({}, opts.scales.x, { title: { display: true, text: 'Confidence %', color: '#737373' } }),
+                y: Object.assign({}, opts.scales.y, { title: { display: true, text: '30d ROI %', color: '#737373' } }) }
+    }) });
+    {% endif %}
+  }
+  {% endif %}
+})();
+</script>
+
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Stocks{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Stocks</h1>
+  <p>All stocks ranked by mention count. Click any row for full detail.</p>
+</div>
+
+{% if shifts %}
+<div class="card" style="margin-bottom:24px;">
+  <div class="section-header">
+    <h2>Narrative shifts <span style="font-size:11px;color:var(--muted);font-weight:400;">(last 30 vs 31–90 days)</span></h2>
+  </div>
+  {% for s in shifts %}
+  <div class="shift-row">
+    <a href="/stocks/{{ s.ticker }}" style="font-weight:600;min-width:64px;">{{ s.ticker }}</a>
+    <span class="badge badge-{{ 'bull' if s.from == 'bullish' else ('bear' if s.from == 'bearish' else 'neut') }}">{{ s.from }}</span>
+    <span class="shift-arrow">→</span>
+    <span class="badge badge-{{ 'bull' if s.to == 'bullish' else ('bear' if s.to == 'bearish' else 'neut') }}">{{ s.to }}</span>
+    {% if s.weeks %}
+    <div style="display:flex;gap:2px;margin-left:8px;">
+      {% for w in s.weeks %}
+      {% set tot = (w.bullish + w.bearish + w.neutral) or 1 %}
+      <div style="width:14px;height:20px;display:flex;flex-direction:column;justify-content:flex-end;gap:1px;" title="{{ w.bullish }}B / {{ w.bearish }}R / {{ w.neutral }}N">
+        <div style="height:{{ [((w.bullish / tot)*18)|int, 2]|max }}px;background:var(--green);border-radius:1px;"></div>
+        <div style="height:{{ [((w.bearish / tot)*18)|int, 2]|max }}px;background:var(--red);border-radius:1px;"></div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<div class="card">
+  <div class="section-header">
+    <h2>All mentioned stocks</h2>
+    <span style="font-size:12px;color:var(--muted);">{{ mentioned|length }} tickers</span>
+  </div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th class="num">Mentions</th>
+          <th class="num">Channels</th>
+          <th>Sentiment</th>
+          <th class="num">Avg ROI 30d</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in mentioned %}
+        <tr style="cursor:pointer;" onclick="location.href='/stocks/{{ s.ticker }}'">
+          <td><span style="font-weight:600;">{{ s.ticker }}</span></td>
+          <td style="color:var(--muted);">{{ s.company_name or '—' }}</td>
+          <td class="num">{{ s.mention_count }}</td>
+          <td class="num">{{ s.channel_count }}</td>
+          <td>
+            <div class="sent-bar" title="{{ s.bull_pct }}% bull / {{ s.bear_pct }}% bear / {{ s.neutral_pct }}% neutral">
+              <div class="b" style="width:{{ s.bull_pct }}%;"></div>
+              <div class="r" style="width:{{ s.bear_pct }}%;"></div>
+              <div class="n" style="width:{{ s.neutral_pct }}%;"></div>
+            </div>
+          </td>
+          <td class="num">
+            {% if s.avg_roi_30d is not none %}
+              <span class="{{ 'roi-pos' if s.avg_roi_30d >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(s.avg_roi_30d) }}%</span>
+            {% else %}
+              <span class="roi-nil">—</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

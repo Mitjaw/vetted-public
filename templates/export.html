@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Export{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Export Data</h1>
+  <p>Download raw table data as CSV or JSON. Date filters apply to tables that have date columns.</p>
+</div>
+
+<!-- Global date filter -->
+<div class="card section" style="max-width:640px;">
+  <div class="card-title">Date Range Filter</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end;">
+    <div class="form-group" style="margin:0;">
+      <label for="g_date_from">From</label>
+      <input type="date" id="g_date_from" style="width:100%;">
+    </div>
+    <div class="form-group" style="margin:0;">
+      <label for="g_date_to">To</label>
+      <input type="date" id="g_date_to" style="width:100%;">
+    </div>
+  </div>
+  <div style="margin-top:10px;font-size:12px;color:var(--text-muted);">
+    Leave blank to export all available data. Applies to: videos, mentions, roi_tracking, daily_sentiment, price_daily, db_stats_daily.
+  </div>
+</div>
+
+<!-- Table export cards -->
+<div class="card-title">Tables</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="section">
+
+  {% set table_meta = [
+    ("channels",         "All tracked YouTube channels",                                      false),
+    ("videos",           "All videos (metadata only, no transcript text)",                    true),
+    ("mentions",         "All extracted stock/asset mentions",                                true),
+    ("roi_tracking",     "ROI tracking rows — price at publish, 7d, 30d",                    true),
+    ("roi_milestones",   "Extended milestone ROI — 3d/7d/14d/30d/60d/90d/180d/1yr+ with benchmark-relative ROI vs SPY/QQQ/EWG", false),
+    ("tickers",          "Ticker metadata — sector, industry, market cap, market cap tier",   false),
+    ("daily_sentiment",  "Daily aggregated sentiment per ticker",                             true),
+    ("price_daily",      "Historical daily closing prices (includes SPY, QQQ, EWG, VIX)",    true),
+    ("analysis_configs", "Analysis pipeline config names and creation dates",                 false),
+    ("db_stats_daily",   "DB growth snapshots over time",                                     true),
+  ] %}
+
+  {% for tname, tdesc, tdate in table_meta %}
+  {% set meta = table_info.get(tname, {}) if table_info else {} %}
+  <div class="card" style="display:flex;flex-direction:column;gap:10px;">
+    <div>
+      <div style="font-weight:600;font-size:14px;font-family:monospace;color:var(--accent);">{{ tname }}</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">{{ tdesc }}</div>
+    </div>
+    {% if meta %}
+    <div style="display:flex;gap:16px;font-size:11px;color:var(--text-muted);padding:6px 8px;background:rgba(255,255,255,0.03);border-radius:4px;">
+      <span><strong style="color:var(--text);">{{ meta.rows if meta.rows is not none else '—' }}</strong> rows</span>
+      {% if meta.date_min %}
+      <span>{{ meta.date_min }} → {{ meta.date_max }}</span>
+      {% endif %}
+    </div>
+    {% endif %}
+    <div style="display:flex;gap:8px;margin-top:auto;">
+      <button type="button" class="btn btn-primary" style="font-size:12px;padding:5px 12px;"
+        onclick="dlTable('{{ tname }}', 'csv', {{ 'true' if tdate else 'false' }})">CSV</button>
+      <button type="button" class="btn btn-secondary" style="font-size:12px;padding:5px 12px;"
+        onclick="dlTable('{{ tname }}', 'json', {{ 'true' if tdate else 'false' }})">JSON</button>
+    </div>
+  </div>
+  {% endfor %}
+
+</div>
+
+<!-- AI Analysis Export -->
+<div class="card-title">AI Analysis Export</div>
+<div style="display:flex;flex-direction:column;gap:12px;" class="section">
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-size:13px;color:var(--text);margin-bottom:4px;">All real mentions — flat denormalized CSV joined with channel, video, and ROI data.</div>
+        <div style="font-size:12px;color:var(--text-muted);">
+          Columns: upload_date · video_id · video_title · channel_name · channel_language · ticker · company_name · asset_type · sentiment · confidence · recommendation · mention_count · context · config_name · price_at_publish · roi_7d · roi_30d · roi_current · price_7d_date · price_30d_date
+        </div>
+      </div>
+      <a href="/export/ai-analysis" class="btn btn-primary" style="white-space:nowrap;">Download CSV</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+      <div>
+        <div style="font-size:13px;color:var(--text);margin-bottom:4px;">
+          Verified mentions only — ticker or company name confirmed present in the transcript. Zero hallucinations at the stock identity level.
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);">
+          Same columns as above. Excludes any mention where the stock name/ticker could not be found as a literal string in the source transcript.
+        </div>
+      </div>
+      <a href="/export/verified-mentions" class="btn btn-primary" style="white-space:nowrap;">Download CSV</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function dlTable(table, fmt, useDates) {
+  const params = new URLSearchParams({ format: fmt });
+  if (useDates) {
+    const df = document.getElementById('g_date_from').value;
+    const dt = document.getElementById('g_date_to').value;
+    if (df) params.set('date_from', df);
+    if (dt) params.set('date_to', dt);
+  }
+  window.location.href = '/export/raw/' + table + '?' + params.toString();
+}
+</script>
+
+{% endblock %}

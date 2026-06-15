@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vetted — {% block title %}Legal{% endblock %}</title>
+  <link rel="stylesheet" href="/consumer/static/consumer.css">
+  <style>
+    body { background: #0c0c0c; color: #e5e5e5; }
+    .legal-wrap { max-width: 760px; margin: 0 auto; padding: 64px 24px 96px; line-height: 1.7; }
+    .legal-wrap a { color: #d97706; }
+    .legal-wrap h1 { font-size: 28px; font-weight: 600; margin: 0 0 8px; color: #fff; }
+    .legal-wrap .updated { color: #888; font-size: 13px; margin: 0 0 32px; }
+    .legal-wrap h2 { font-size: 18px; font-weight: 600; margin: 32px 0 8px; color: #fff; }
+    .legal-wrap h3 { font-size: 15px; font-weight: 600; margin: 20px 0 4px; color: #ddd; }
+    .legal-wrap p, .legal-wrap li { color: #c4c4c4; font-size: 14px; }
+    .legal-wrap .topnav { font-size: 13px; margin-bottom: 32px; }
+    .legal-wrap .topnav a { margin-right: 16px; }
+    .legal-wrap .placeholder { color: #facc15; font-style: italic; }
+    .legal-wrap .draft-notice {
+      background: rgba(220, 80, 80, 0.08); border: 1px solid rgba(220, 80, 80, 0.25);
+      color: #fca5a5; padding: 12px 16px; border-radius: 6px;
+      font-size: 12px; margin-bottom: 24px;
+    }
+  </style>
+</head>
+<body>
+  <div class="legal-wrap">
+    <div class="topnav">
+      <a href="/">← Vetted</a>
+      <a href="/legal/terms">Terms</a>
+      <a href="/legal/privacy">Privacy</a>
+      <a href="/legal/imprint">Imprint</a>
+    </div>
+    {% block body %}{% endblock %}
+  </div>
+</body>
+</html>

@@ -1,0 +1,44 @@
+# Web framework
+fastapi==0.115.5
+starlette==0.41.2
+uvicorn[standard]==0.34.0
+python-multipart==0.0.20
+jinja2==3.1.5
+itsdangerous==2.2.0
+
+# Auth / sessions
+bcrypt==4.2.1
+passlib[bcrypt]==1.7.4
+
+# Database
+sqlalchemy==2.0.36
+
+# External APIs
+anthropic==0.40.0
+yfinance==0.2.50
+google-api-python-client==2.155.0
+
+# HTTP / config
+requests==2.32.3
+python-dotenv==1.0.1
+
+# Scheduling (Phase 1)
+apscheduler==3.11.0
+
+# Date utilities (Phase 1)
+python-dateutil==2.9.0
+
+# Async file I/O (Phase 1 — backups, structured logs)
+aiofiles==24.1.0
+
+# Structured logging (Phase 1)
+python-json-logger==2.0.7
+
+# Rate limiting on consumer endpoints (Phase 1)
+slowapi==0.1.9
+
+# Billing — Stripe Checkout + webhooks + portal (Phase 2)
+stripe==11.4.1
+
+# Transactional email — verification, password reset, welcome (Phase 2)
+resend==2.5.1

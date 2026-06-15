@@ -1,0 +1,295 @@
+{% extends "base.html" %}
+{% block title %}Vetted — {{ channel.name }}{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <a href="/channels" style="font-size:12px;color:var(--muted);">← Channels</a>
+  <h1 style="margin-top:8px;">{{ channel.name }}</h1>
+  <p>{{ (channel.language or 'en') | upper }} &bull; <a href="{{ channel.url }}" target="_blank" rel="noopener">YouTube →</a></p>
+</div>
+
+<div class="kpi-grid" style="margin-bottom:24px;">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ videos|length }}</div>
+    <div class="kpi-label">Videos (in window)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ mentions|length }}</div>
+    <div class="kpi-label">Mentions</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value {% if pick_accuracy is not none %}{{ 'bull' if pick_accuracy >= 55 else 'bear' }}{% endif %}">
+      {% if pick_accuracy is not none %}{{ pick_accuracy }}%{% else %}—{% endif %}
+    </div>
+    <div class="kpi-label">Pick accuracy (30d)</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ top_stocks|length }}</div>
+    <div class="kpi-label">Distinct tickers</div>
+  </div>
+</div>
+
+{% if top_stocks %}
+<div class="card" style="margin-bottom:24px;">
+  <h2>Top stocks</h2>
+  <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+    {% for s in top_stocks %}
+    <a href="/stocks/{{ s.ticker }}" class="ticker-chip">
+      {{ s.ticker }}
+      <span style="font-weight:400;color:var(--muted);">{{ s.mention_count }}</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+{# ── Portfolio simulator ── #}
+{% set has_portfolio = portfolio.bullish or portfolio.bearish %}
+{% if has_portfolio %}
+<div class="card" style="margin-bottom:24px;">
+  <div class="section-header" style="margin-bottom:16px;">
+    <h2>Portfolio simulator</h2>
+    <div style="display:flex;gap:8px;align-items:center;">
+      {# Bullish / Bearish toggle #}
+      <div class="toggle-group" id="sentToggle">
+        <button class="toggle-btn" id="btn-bullish" data-sent="bullish" onclick="setSent('bullish',this)">Bullish picks</button>
+        <button class="toggle-btn" id="btn-bearish" data-sent="bearish" onclick="setSent('bearish',this)">Bearish picks</button>
+      </div>
+      {# Time range #}
+      <div class="toggle-group" id="rangeToggle">
+        <button class="toggle-btn" data-range="1"   onclick="setRange(1,this)">1M</button>
+        <button class="toggle-btn" data-range="3"   onclick="setRange(3,this)">3M</button>
+        <button class="toggle-btn" data-range="ytd" onclick="setRange('ytd',this)">YTD</button>
+        <button class="toggle-btn" data-range="12"  onclick="setRange(12,this)">1Y</button>
+        <button class="toggle-btn" data-range="60"  onclick="setRange(60,this)">5Y</button>
+        <button class="toggle-btn active" data-range="max" onclick="setRange('max',this)">Max</button>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="portfolioChart" height="100" style="margin-bottom:20px;"></canvas>
+
+  {# Monthly table #}
+  <div class="tbl-wrap" id="portfolioTable">
+    <table>
+      <thead>
+        <tr>
+          <th>Month</th>
+          <th>Top picks</th>
+          <th class="num">ROI 30d</th>
+          <th class="num">ROI 365d</th>
+          <th class="num">Till now</th>
+        </tr>
+      </thead>
+      <tbody id="portfolioTbody"></tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;margin-top:8px;">"Till now" uses the latest available price date per basket. Weights capped at 5× per ticker — <span style="color:var(--accent);">*</span> indicates real count exceeds cap.</p>
+</div>
+{% endif %}
+
+<div class="card" style="margin-bottom:24px;">
+  <h2>Recent mentions</h2>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Video</th>
+          <th>Ticker</th>
+          <th>Sentiment</th>
+          <th>Rec</th>
+          <th class="num">ROI 7d</th>
+          <th class="num">ROI 30d</th>
+          <th>Quote</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in mentions %}
+        <tr>
+          <td style="white-space:nowrap;">{{ m.upload_date }}</td>
+          <td style="font-size:12px;max-width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
+            <a href="https://youtube.com/watch?v={{ m.video_id }}" target="_blank" rel="noopener" style="color:var(--text);">{{ m.video_title }}</a>
+          </td>
+          <td><a href="/stocks/{{ m.ticker }}" style="font-weight:600;">{{ m.ticker }}</a></td>
+          <td><span class="badge badge-{{ 'bull' if m.sentiment == 'bullish' else ('bear' if m.sentiment == 'bearish' else 'neut') }}">{{ m.sentiment }}</span></td>
+          <td style="font-size:12px;color:var(--muted);">{{ m.recommendation or '—' }}</td>
+          <td class="num">
+            {% if m.roi_7d is not none %}<span class="{{ 'roi-pos' if m.roi_7d >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(m.roi_7d) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td class="num">
+            {% if m.roi_30d is not none %}<span class="{{ 'roi-pos' if m.roi_30d >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(m.roi_30d) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td style="font-size:12px;color:var(--muted);max-width:240px;">
+            {% if m.verified == 1 %}<span style="color:var(--green);margin-right:4px;">✓</span>{% endif %}
+            {{ m.context[:100] if m.context else '—' }}{% if m.context and m.context|length > 100 %}…{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+{% if portfolio.bullish or portfolio.bearish %}
+<script>
+const PORTFOLIO = {{ portfolio | tojson }};
+let currentSent  = PORTFOLIO.bullish.length ? 'bullish' : 'bearish';
+let currentRange = 'max';
+
+function setSent(sent, btn) {
+  currentSent = sent;
+  document.querySelectorAll('#sentToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function setRange(range, btn) {
+  currentRange = range;
+  document.querySelectorAll('#rangeToggle .toggle-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  render();
+}
+
+function filterData(data) {
+  if (!data || !data.length) return [];
+  if (currentRange === 'max') return data;
+  const now = new Date();
+  let cutoff;
+  if (currentRange === 'ytd') {
+    cutoff = `${now.getFullYear()}-01`;
+  } else {
+    const d = new Date(now.getFullYear(), now.getMonth() - currentRange + 1, 1);
+    cutoff = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+  return data.filter(r => r.month >= cutoff);
+}
+
+function roiColor(v) {
+  if (v === null || v === undefined) return 'var(--muted)';
+  return v >= 0 ? 'var(--green)' : 'var(--red)';
+}
+function roiFmt(v) {
+  if (v === null || v === undefined) return '—';
+  return (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+}
+
+// Chart.js custom external tooltip
+const tooltipEl = document.createElement('div');
+tooltipEl.id = 'portfolio-tooltip';
+tooltipEl.style.cssText = `
+  position:absolute;background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px;font-size:12px;pointer-events:none;z-index:999;
+  min-width:220px;display:none;color:var(--text);
+`;
+document.body.appendChild(tooltipEl);
+
+function externalTooltip(context) {
+  const { chart, tooltip } = context;
+  if (tooltip.opacity === 0) { tooltipEl.style.display = 'none'; return; }
+
+  const idx = tooltip.dataPoints[0].dataIndex;
+  const data = filterData(PORTFOLIO[currentSent]);
+  if (!data[idx]) return;
+  const row = data[idx];
+
+  let html = `<div style="font-weight:600;margin-bottom:8px;">${row.month}</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px 12px;margin-bottom:10px;font-size:11px;">`;
+  html += `<span style="color:var(--muted);">30d</span><span style="color:var(--muted);">365d</span><span style="color:var(--muted);">Now${row.roi_now_date ? ' (' + row.roi_now_date + ')' : ''}</span>`;
+  html += `<span style="color:${roiColor(row.roi_30d)}">${roiFmt(row.roi_30d)}</span>`;
+  html += `<span style="color:${roiColor(row.roi_365d)}">${roiFmt(row.roi_365d)}</span>`;
+  html += `<span style="color:${roiColor(row.roi_now)}">${roiFmt(row.roi_now)}</span>`;
+  html += `</div>`;
+
+  if (row.stocks && row.stocks.length) {
+    html += `<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Basket (top ${row.stocks.length})</div>`;
+    row.stocks.forEach(s => {
+      const cap = s.capped ? `<span style="color:var(--accent);margin-left:2px;" title="Capped at 5×, real count: ${s.count}">*</span>` : '';
+      html += `<div style="display:flex;justify-content:space-between;padding:2px 0;border-bottom:1px solid var(--border);">`;
+      html += `<span style="font-weight:600;">${s.ticker}${cap} <span style="font-weight:400;color:var(--muted);">×${s.weight}</span></span>`;
+      html += `<span style="color:${roiColor(s.roi_30d)}">${roiFmt(s.roi_30d)}</span>`;
+      html += `</div>`;
+    });
+  }
+
+  tooltipEl.innerHTML = html;
+  tooltipEl.style.display = 'block';
+
+  const pos = chart.canvas.getBoundingClientRect();
+  const x = pos.left + window.scrollX + tooltip.caretX;
+  const y = pos.top  + window.scrollY + tooltip.caretY;
+  tooltipEl.style.left = (x + 12) + 'px';
+  tooltipEl.style.top  = (y - 20) + 'px';
+}
+
+let chart;
+function render() {
+  const data = filterData(PORTFOLIO[currentSent]);
+  const labels  = data.map(r => r.month);
+  const roi30   = data.map(r => r.roi_30d);
+  const roi365  = data.map(r => r.roi_365d);
+  const roiNow  = data.map(r => r.roi_now);
+
+  if (chart) {
+    chart.data.labels = labels;
+    chart.data.datasets[0].data = roi30;
+    chart.data.datasets[1].data = roi365;
+    chart.data.datasets[2].data = roiNow;
+    chart.update();
+  } else {
+    chart = new Chart(document.getElementById('portfolioChart'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'ROI 30d',   data: roi30,  borderColor: '#4ade80', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.3, spanGaps: true },
+          { label: 'ROI 365d',  data: roi365, borderColor: '#d97706', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.3, spanGaps: true },
+          { label: 'Till now',  data: roiNow, borderColor: '#e8e8e8', borderWidth: 1.5, pointRadius: 3, fill: false, tension: 0.3, spanGaps: true },
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { labels: { color: '#888', font: { size: 11 } } },
+          tooltip: { enabled: false, external: externalTooltip },
+        },
+        scales: {
+          x: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } },
+          y: { ticks: { color: '#555', font: { size: 10 }, callback: v => v + '%' }, grid: { color: '#1a1a1a' } }
+        }
+      }
+    });
+  }
+
+  // Rebuild table
+  const tbody = document.getElementById('portfolioTbody');
+  tbody.innerHTML = data.map(row => {
+    const chips = row.stocks.slice(0, 5).map(s =>
+      `<a href="/stocks/${s.ticker}" class="ticker-chip" style="padding:2px 7px;font-size:11px;">${s.ticker}${s.capped ? '<span style="color:var(--accent)">*</span>' : ''}</a>`
+    ).join('');
+    return `<tr>
+      <td style="white-space:nowrap;">${row.month}</td>
+      <td>${chips}</td>
+      <td class="num"><span style="color:${roiColor(row.roi_30d)}">${roiFmt(row.roi_30d)}</span></td>
+      <td class="num"><span style="color:${roiColor(row.roi_365d)}">${roiFmt(row.roi_365d)}</span></td>
+      <td class="num"><span style="color:${roiColor(row.roi_now)}" title="${row.roi_now_date || ''}">${roiFmt(row.roi_now)}${row.roi_now_date ? '<span style="font-size:10px;color:var(--muted);margin-left:4px;">'+row.roi_now_date+'</span>' : ''}</span></td>
+    </tr>`;
+  }).join('');
+}
+
+document.getElementById('btn-' + currentSent).classList.add('active');
+render();
+
+// Hide tooltip on scroll/click outside
+document.addEventListener('click', () => { tooltipEl.style.display = 'none'; });
+</script>
+{% endif %}
+{% endblock %}

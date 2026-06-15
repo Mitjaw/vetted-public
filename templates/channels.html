@@ -1,0 +1,771 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Channels{% endblock %}
+{% block content %}
+
+<style>
+/* ── Quick action cards ──────────────────────────────────────────── */
+.qa-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+.qa-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.qa-title {
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.qa-desc {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.45;
+  flex: 1;
+}
+.qa-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+/* ── Segmented operation selector ────────────────────────────────── */
+.op-seg {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.op-seg input[type=radio] { display: none; }
+.op-seg label {
+  flex: 1;
+  text-align: center;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-right: 1px solid var(--border);
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+  user-select: none;
+}
+.op-seg label:last-of-type { border-right: none; }
+.op-seg input[type=radio]:checked + label {
+  background: var(--bg-raised);
+  color: var(--accent-hl);
+}
+
+/* ── Backfill form fields ─────────────────────────────────────────── */
+.bf-field { display: flex; flex-direction: column; gap: 4px; }
+.bf-field label { font-size: 11px; color: var(--text-muted); font-weight: 500; }
+.bf-input {
+  padding: 7px 10px;
+  border-radius: 5px;
+  border: 1px solid var(--border);
+  background: var(--bg-raised);
+  color: var(--text);
+  font-size: 13px;
+  font-family: var(--font);
+}
+.bf-input:focus { outline: none; border-color: var(--accent); }
+
+/* ── Channel checklist ───────────────────────────────────────────── */
+.ch-checklist {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  max-height: 128px;
+  overflow-y: auto;
+  background: var(--bg-raised);
+  padding: 4px 0;
+  min-width: 180px;
+}
+.ch-checklist label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.1s;
+}
+.ch-checklist label:hover { background: rgba(255,255,255,.04); }
+.ch-checklist input[type=checkbox] {
+  accent-color: var(--accent);
+  width: 13px; height: 13px;
+  cursor: pointer; flex-shrink: 0;
+}
+
+/* ── Skip steps ──────────────────────────────────────────────────── */
+.skip-steps { display: flex; gap: 14px; flex-wrap: wrap; }
+.skip-steps label {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--text-muted); cursor: pointer;
+}
+.skip-steps input[type=checkbox] { accent-color: var(--accent); width: 12px; height: 12px; }
+
+/* ── Pipeline status ──────────────────────────────────────────────── */
+.ps-step {
+  display: flex; align-items: center; gap: 12px;
+  padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px;
+}
+.ps-step:last-child { border-bottom: none; }
+.ps-label { min-width: 100px; font-weight: 500; }
+.ps-icon  { font-size: 14px; min-width: 18px; text-align: center; }
+.ps-icon.spin { display: inline-block; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Badges ──────────────────────────────────────────────────────── */
+.badge-free    { background: rgba(16,185,129,.1); color: #10b981; border: 1px solid rgba(16,185,129,.25); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .04em; white-space: nowrap; }
+.badge-credits { background: rgba(217,119,6,.1);  color: #d97706; border: 1px solid rgba(217,119,6,.25);  font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 3px; letter-spacing: .04em; white-space: nowrap; }
+
+/* ── Table action column ─────────────────────────────────────────── */
+.tbl-actions { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; }
+.btn-xs { font-size: 11px !important; padding: 3px 8px !important; }
+.discover-result { margin-top: 6px; font-size: 11px; color: var(--text-muted); }
+
+/* ── Latest video rows ───────────────────────────────────────────── */
+.latest-item {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 4px 0; border-bottom: 1px solid var(--border);
+}
+.latest-item:last-child { border-bottom: none; }
+</style>
+
+
+<div class="page-header">
+  <h1>Channels</h1>
+  <p>Manage tracked YouTube channels and run backfill operations.</p>
+</div>
+
+
+<!-- ══ Add Channel ══════════════════════════════════════════════════ -->
+<div class="card section">
+  <div class="card-title">Add Channel</div>
+  <form method="POST" action="/admin/channels/add">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+
+      <div class="form-group">
+        <label>YouTube URL or @handle
+          <span style="font-size:10px;color:var(--text-muted);font-weight:400;margin-left:4px;">— @handle, youtube.com/c/…, or UC… ID</span>
+        </label>
+        <div style="display:flex;gap:6px;">
+          <input type="text" id="channel-url-input"
+                 placeholder="@finanzfluss or youtube.com/..."
+                 style="width:240px;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text);font-size:13px;font-family:var(--font);">
+          <button type="button" onclick="resolveChannel()" class="btn btn-secondary"
+                  style="font-size:12px;white-space:nowrap;">
+            Resolve &nbsp;<span class="badge-free">FREE</span>
+          </button>
+        </div>
+        <span id="resolve-status" style="font-size:11px;display:block;margin-top:3px;color:var(--text-muted);">
+          Converts any URL or @handle to a UC… channel ID — required before adding.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label>Channel ID <span style="color:var(--text-muted);font-size:11px;">(UC…)</span></label>
+        <input type="text" id="channel-id-input" name="channel_id"
+               placeholder="UCxxxxxxxxxxxxxxxx"
+               style="width:200px;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text);font-size:13px;font-family:var(--font);">
+      </div>
+
+      <div class="form-group">
+        <label>Display Name</label>
+        <input type="text" name="name" id="channel-name-input"
+               placeholder="Channel name"
+               style="width:160px;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text);font-size:13px;font-family:var(--font);">
+      </div>
+
+      <div class="form-group">
+        <label>Language</label>
+        <select name="language"
+                style="width:85px;padding:7px 10px;border-radius:5px;border:1px solid var(--border);background:var(--bg-raised);color:var(--text);font-size:13px;font-family:var(--font);">
+          <option value="de">DE</option>
+          <option value="en">EN</option>
+          <option value="es">ES</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <button type="submit" class="btn btn-primary">Add Channel</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+
+<!-- ══ Quick Actions ════════════════════════════════════════════════ -->
+<div class="card section">
+  <div class="card-title">Quick Actions</div>
+  <div class="qa-grid">
+
+    <div class="qa-card">
+      <div class="qa-title">
+        <span style="color:var(--accent);">⟳</span> Check New Videos
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="qa-desc">Poll each channel's RSS feed to see which have new videos in the last 48h — no transcripts fetched, no credits spent.</div>
+      <div id="check-recent-result" style="font-size:12px;display:none;margin-top:2px;line-height:1.45;"></div>
+      <div class="qa-foot">
+        <button type="button" onclick="checkRecentAll()" id="check-recent-btn"
+                class="btn btn-secondary" style="font-size:12px;">Check All Channels</button>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-title">
+        <span style="color:var(--accent);">▶</span> Scan All Channels
+        <span class="badge-credits">credits</span>
+      </div>
+      <div class="qa-desc">RSS-check every channel for new videos, then fetch and run extraction on each transcript not yet stored.</div>
+      <div class="qa-foot">
+        <form method="POST" action="/admin/scan/all" class="scan-form" style="margin:0;">
+          <button type="submit" class="btn btn-primary" style="font-size:12px;">Scan Now</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="qa-card">
+      <div class="qa-title">
+        <span style="color:var(--accent);">◎</span> Update ROIs
+        <span class="badge-free">FREE</span>
+      </div>
+      <div class="qa-desc">Refresh 7d and 30d ROIs for all mentions whose milestone dates have passed. Groups by ticker to minimize API calls.</div>
+      <div class="qa-foot">
+        <form method="POST" action="/admin/update-rois" class="scan-form" style="margin:0;">
+          <button type="submit" class="btn btn-secondary" style="font-size:12px;">Update ROI</button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ Backfill Operations ══════════════════════════════════════════ -->
+<div class="card section">
+  <div class="card-title">Backfill Operations</div>
+
+  <!-- Operation selector -->
+  <div class="op-seg" style="margin-bottom:12px;">
+    <input type="radio" name="op_select" id="op-backfill"  value="backfill"  checked>
+    <label for="op-backfill">Backfill Transcripts</label>
+    <input type="radio" name="op_select" id="op-reanalyze" value="reanalyze">
+    <label for="op-reanalyze">Re-analyze</label>
+    <input type="radio" name="op_select" id="op-pipeline"  value="pipeline">
+    <label for="op-pipeline">Full Pipeline</label>
+  </div>
+
+  <div id="op-desc" style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+    Fetch transcripts for a specific date range and channel. Uses TranscriptAPI credits.
+  </div>
+
+  <form id="backfill-form" method="POST" action="/admin/backfill/timeframe" class="scan-form">
+
+    <!-- Date range + channel selector -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-bottom:14px;">
+
+      <div class="bf-field">
+        <label>From</label>
+        <input type="date" name="date_from" class="bf-input">
+      </div>
+
+      <div class="bf-field">
+        <label>To</label>
+        <input type="date" name="date_to" class="bf-input">
+      </div>
+
+      <!-- Backfill: single channel dropdown -->
+      <div class="bf-field" id="channel-single-wrap">
+        <label>Channel</label>
+        <select name="channel_id" class="bf-input">
+          <option value="all">All Channels</option>
+          {% for ch in channels %}
+          <option value="{{ ch.id }}">{{ ch.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Reanalyze / Pipeline: channel checklist -->
+      <div class="bf-field" id="channel-multi-wrap" style="display:none;">
+        <label>
+          Channels &ensp;
+          <a href="#" onclick="pipelineSelectAll(true);return false;"
+             style="font-size:10px;color:var(--accent);text-decoration:none;">All</a>
+          / <a href="#" onclick="pipelineSelectAll(false);return false;"
+             style="font-size:10px;color:var(--accent);text-decoration:none;">None</a>
+        </label>
+        <div class="ch-checklist" id="pipeline-ch-list">
+          {% for ch in channels %}
+          <label>
+            <input type="checkbox" name="channel_ids" value="{{ ch.id }}"> {{ ch.name }}
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Skip steps (pipeline only) -->
+    <div id="skip-steps-wrap" style="display:none;margin-bottom:14px;padding:12px;border:1px solid var(--border);border-radius:5px;background:rgba(255,255,255,.02);">
+      <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:8px;text-transform:uppercase;letter-spacing:.06em;">Steps to skip</div>
+      <div class="skip-steps">
+        <label><input type="checkbox" name="skip_backfill"    value="1"> Backfill</label>
+        <label><input type="checkbox" name="skip_reanalyze"   value="1"> Reanalyze</label>
+        <label><input type="checkbox" name="skip_roi"         value="1"> ROI Baselines</label>
+        <label><input type="checkbox" name="skip_milestones"  value="1"> Milestones</label>
+        <label><input type="checkbox" name="skip_ticker_meta" value="1"> Ticker Meta</label>
+      </div>
+    </div>
+
+    <!-- Submit row -->
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <label style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);cursor:pointer;">
+        <input type="checkbox" name="active_only" value="1" checked
+               style="accent-color:var(--accent);width:13px;height:13px;">
+        Active channels only
+      </label>
+      <button type="submit" id="bf-submit-btn" class="btn btn-primary" style="font-size:13px;">
+        Start Backfill
+      </button>
+      <span id="bf-cost-badge" class="badge-credits">credits</span>
+    </div>
+
+  </form>
+
+  <!-- Pipeline status (shown when running or recently completed) -->
+  <div id="pipeline-status-panel"
+       style="display:none;margin-top:16px;padding:14px;border:1px solid var(--border);border-radius:6px;background:rgba(255,255,255,.02);">
+    <div id="pipeline-status-meta"
+         style="font-size:11px;color:var(--text-muted);margin-bottom:10px;font-weight:500;"></div>
+    <div class="ps-step">
+      <span class="ps-label">Backfill</span>
+      <span class="ps-icon" id="ps-icon-backfill">—</span>
+      <span style="font-size:12px;color:var(--text-muted);" id="ps-detail-backfill"></span>
+    </div>
+    <div class="ps-step">
+      <span class="ps-label">Reanalyze</span>
+      <span class="ps-icon" id="ps-icon-reanalyze">—</span>
+      <span style="font-size:12px;color:var(--text-muted);" id="ps-detail-reanalyze"></span>
+    </div>
+    <div class="ps-step">
+      <span class="ps-label">ROI Update</span>
+      <span class="ps-icon" id="ps-icon-roi">—</span>
+      <span style="font-size:12px;color:var(--text-muted);" id="ps-detail-roi"></span>
+    </div>
+    <div id="ps-error" style="display:none;margin-top:8px;font-size:12px;color:#ef4444;"></div>
+  </div>
+
+</div>
+
+
+<!-- ══ Channels table ════════════════════════════════════════════════ -->
+<div class="card section">
+  <div class="card-title">All Channels</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Language</th>
+          <th>Videos</th>
+          <th>Transcript Health</th>
+          <th>Last Scanned</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ch in channels %}
+        <tr id="ch-row-{{ ch.id }}" {% if ch.skip_backfill %}style="background:rgba(239,68,68,.04);"{% endif %}>
+          <td>
+            <a href="/channel/{{ ch.id }}">{{ ch.name }}</a>
+            {% if ch.skip_backfill %}
+              <span style="margin-left:6px;font-size:10px;font-weight:700;color:#ef4444;background:rgba(239,68,68,.12);padding:2px 6px;border-radius:3px;">EXCLUDED</span>
+            {% endif %}
+          </td>
+          <td><span class="lang-badge">{{ ch.language | upper }}</span></td>
+          <td style="font-size:13px;">{{ ch.video_count }}</td>
+          <td>
+            {% if ch.failure_rate is none %}
+              <span style="font-size:12px;color:var(--text-muted);">—</span>
+            {% elif ch.failure_rate <= 20 %}
+              <span style="font-size:12px;font-weight:600;color:#22c55e;">{{ ch.failure_rate }}% fail</span>
+            {% elif ch.failure_rate <= 50 %}
+              <span style="font-size:12px;font-weight:600;color:#f59e0b;">{{ ch.failure_rate }}% fail</span>
+            {% else %}
+              <span style="font-size:12px;font-weight:600;color:#ef4444;">{{ ch.failure_rate }}% fail</span>
+            {% endif %}
+            <span style="font-size:10px;color:var(--text-muted);margin-left:3px;">({{ ch.transcript_attempts or 0 }} tried)</span>
+          </td>
+          <td style="color:var(--text-muted);font-size:12px;">{{ ch.last_scanned or '—' }}</td>
+          <td>
+            <div class="tbl-actions">
+              <!-- Scan -->
+              <form method="POST" action="/admin/scan/{{ ch.id }}" class="scan-form" style="margin:0;">
+                <button type="submit" class="btn btn-secondary btn-xs">Scan</button>
+              </form>
+              <!-- Latest -->
+              <button onclick="latestChannel('{{ ch.id }}')"
+                      id="latest-btn-{{ ch.id }}"
+                      class="btn btn-secondary btn-xs"
+                      title="Show 15 most recent videos via RSS — no credits.">
+                Latest <span class="badge-free" style="margin-left:2px;">FREE</span>
+              </button>
+              <!-- Discover (only if not excluded) -->
+              {% if not ch.skip_backfill %}
+              <button onclick="discoverChannel('{{ ch.id }}')"
+                      id="discover-btn-{{ ch.id }}"
+                      class="btn btn-secondary btn-xs"
+                      title="Count upload history and estimate backfill credits — no credits consumed.">
+                Discover <span class="badge-free" style="margin-left:2px;">FREE</span>
+              </button>
+              {% endif %}
+              <!-- Exclude / Re-enable -->
+              <form method="POST" action="/admin/channels/{{ ch.id }}/toggle-skip-backfill" style="margin:0;">
+                <button type="submit" class="btn btn-secondary btn-xs"
+                        style="{% if ch.skip_backfill %}border-color:#22c55e;color:#22c55e;{% else %}border-color:#ef4444;color:#ef4444;{% endif %}">
+                  {% if ch.skip_backfill %}Re-enable{% else %}Exclude{% endif %}
+                </button>
+              </form>
+            </div>
+
+            <!-- Discover result + fetch button (revealed inline) -->
+            <div id="discover-result-wrap-{{ ch.id }}" class="discover-result" style="display:none;">
+              <span id="discover-result-{{ ch.id }}"></span>
+              <form id="backfill-form-{{ ch.id }}" method="POST" action="/admin/backfill/{{ ch.id }}"
+                    class="scan-form" style="display:none;margin-top:5px;">
+                <button type="submit" class="btn btn-secondary btn-xs"
+                        style="border-color:var(--accent);color:var(--accent);">
+                  Fetch Transcripts &nbsp;<span id="backfill-cost-{{ ch.id }}" class="badge-credits"></span>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Latest video panel (toggled per channel) -->
+        <tr id="latest-panel-{{ ch.id }}" style="display:none;">
+          <td colspan="6" style="padding:0 12px 12px;background:rgba(255,255,255,.015);">
+            <div id="latest-content-{{ ch.id }}"
+                 style="padding:8px 0;font-size:12px;color:var(--text-muted);">Loading…</div>
+          </td>
+        </tr>
+
+        {% else %}
+        <tr>
+          <td colspan="6" style="color:var(--text-muted);text-align:center;padding:32px 0;">
+            No channels added yet.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+// ── Operation selector ───────────────────────────────────────────────
+const _OPS = {
+  backfill:  {
+    action: '/admin/backfill/timeframe',
+    label:  'Start Backfill',
+    cost:   'credits',
+    desc:   'Fetch transcripts for a specific date range and channel. Uses TranscriptAPI credits.',
+    multi:  false,
+  },
+  reanalyze: {
+    action: '/admin/reanalyze',
+    label:  'Re-analyze',
+    cost:   'free',
+    desc:   'Run the extraction pipeline on videos already in the DB that have a transcript but no mentions — zero API calls.',
+    multi:  false,
+  },
+  pipeline:  {
+    action: '/admin/pipeline',
+    label:  'Run Pipeline',
+    cost:   'credits',
+    desc:   'Run backfill → reanalyze → ROI update in one sequenced background job. Scopes the ROI baseline step to videos analyzed in this run.',
+    multi:  true,
+  },
+};
+
+document.querySelectorAll('input[name="op_select"]').forEach(function(radio) {
+  radio.addEventListener('change', function() {
+    const op = _OPS[this.value];
+    document.getElementById('backfill-form').action   = op.action;
+    document.getElementById('bf-submit-btn').textContent = op.label;
+    document.getElementById('op-desc').textContent    = op.desc;
+
+    const badge = document.getElementById('bf-cost-badge');
+    badge.className   = op.cost === 'free' ? 'badge-free' : 'badge-credits';
+    badge.textContent = op.cost === 'free' ? 'FREE' : 'credits';
+
+    // Skip steps only for full pipeline
+    document.getElementById('skip-steps-wrap').style.display =
+      this.value === 'pipeline' ? 'block' : 'none';
+
+    // Channel selector: single dropdown for backfill, checklist for pipeline, hidden for reanalyze
+    document.getElementById('channel-single-wrap').style.display =
+      this.value === 'backfill' ? 'block' : 'none';
+    document.getElementById('channel-multi-wrap').style.display =
+      this.value === 'pipeline' ? 'block' : 'none';
+  });
+});
+
+function pipelineSelectAll(checked) {
+  document.querySelectorAll('#pipeline-ch-list input[type=checkbox]')
+    .forEach(function(cb) { cb.checked = checked; });
+}
+
+
+// ── Pipeline status polling ──────────────────────────────────────────
+var _pipelinePoller = null;
+
+var _stateIcon = {
+  pending: '—',
+  running: '<span class="ps-icon spin" style="color:var(--accent);">⟳</span>',
+  done:    '<span style="color:var(--positive);">✓</span>',
+  error:   '<span style="color:var(--negative);">✗</span>',
+  skipped: '<span style="color:var(--text-muted);">⊘</span>',
+};
+
+function _applyPipelineStatus(data) {
+  document.getElementById('pipeline-status-panel').style.display = 'block';
+
+  var meta = document.getElementById('pipeline-status-meta');
+  if (data.running) {
+    meta.textContent = 'Running since ' + (data.started_at || '…');
+  } else if (data.completed_at) {
+    meta.textContent = 'Completed at ' + data.completed_at;
+  }
+
+  ['backfill', 'reanalyze', 'roi'].forEach(function(key) {
+    var step = (data.steps || {})[key] || { state: 'pending', detail: '' };
+    document.getElementById('ps-icon-' + key).innerHTML   = _stateIcon[step.state] || step.state;
+    document.getElementById('ps-detail-' + key).textContent = step.detail || '';
+  });
+
+  var errEl = document.getElementById('ps-error');
+  if (data.error) {
+    errEl.style.display = 'block';
+    errEl.textContent   = 'Error: ' + data.error;
+  } else {
+    errEl.style.display = 'none';
+  }
+}
+
+function _startPipelinePolling() {
+  if (_pipelinePoller) return;
+  _pipelinePoller = setInterval(function() {
+    fetch('/admin/pipeline/status')
+      .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function(data) {
+        _applyPipelineStatus(data);
+        if (!data.running) { clearInterval(_pipelinePoller); _pipelinePoller = null; }
+      })
+      .catch(function() { clearInterval(_pipelinePoller); _pipelinePoller = null; });
+  }, 2000);
+}
+
+// On page load: resume status panel if pipeline was running before
+(function() {
+  fetch('/admin/pipeline/status')
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(data) {
+      if (data.running || data.started_at) {
+        _applyPipelineStatus(data);
+        if (data.running) _startPipelinePolling();
+      }
+    })
+    .catch(function() {});
+
+  // When the backfill form is submitted as a pipeline run, start polling
+  var form = document.getElementById('backfill-form');
+  if (form) {
+    form.addEventListener('submit', function() {
+      var sel = document.querySelector('input[name="op_select"]:checked');
+      if (sel && sel.value === 'pipeline') {
+        document.getElementById('pipeline-status-panel').style.display = 'block';
+        setTimeout(_startPipelinePolling, 1500);
+      }
+    });
+  }
+})();
+
+
+// ── Check all channels for new videos ───────────────────────────────
+function checkRecentAll() {
+  var btn    = document.getElementById('check-recent-btn');
+  var result = document.getElementById('check-recent-result');
+  btn.disabled    = true;
+  btn.textContent = 'Checking…';
+  result.style.display = 'block';
+  result.innerHTML = '<span style="color:var(--text-muted)">Polling RSS feeds…</span>';
+
+  fetch('/api/channel/check-recent')
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(data) {
+      btn.textContent = 'Check All Channels';
+      btn.disabled = false;
+      if (data.total_new === 0) {
+        result.innerHTML = '<span style="color:var(--positive)">✓ No new videos across all channels</span>';
+        return;
+      }
+      var rows = data.channels.filter(function(c) { return c.new_count > 0; }).map(function(c) {
+        var vids = c.videos.map(function(v) {
+          return '<li style="margin:2px 0;"><a href="https://youtube.com/watch?v=' + v.video_id +
+            '" target="_blank" style="color:var(--text-muted);text-decoration:none;">' + v.title +
+            '</a> <span style="color:var(--text-muted);margin-left:4px;">' +
+            (v.published_at ? v.published_at.slice(0, 10) : '') + '</span></li>';
+        }).join('');
+        return '<div style="margin:5px 0;"><strong>' + c.name + '</strong>' +
+          '<span style="color:#f59e0b;font-size:11px;margin-left:6px;">' + c.new_count + ' new</span>' +
+          '<ul style="margin:3px 0 0 14px;padding:0;list-style:disc;">' + vids + '</ul></div>';
+      }).join('');
+      result.innerHTML = '<div style="font-size:12px;"><strong>' + data.total_new +
+        ' new video' + (data.total_new !== 1 ? 's' : '') + '</strong>' +
+        '<span style="color:var(--text-muted);margin-left:6px;">(last 48h)</span>' +
+        '<div style="margin-top:6px;">' + rows + '</div></div>';
+    })
+    .catch(function() {
+      btn.textContent = 'Check All Channels';
+      btn.disabled    = false;
+      result.innerHTML = '<span style="color:var(--negative)">✗ Check failed</span>';
+    });
+}
+
+
+// ── Latest 15 videos for one channel ─────────────────────────────────
+function latestChannel(channelId) {
+  var btn     = document.getElementById('latest-btn-' + channelId);
+  var panel   = document.getElementById('latest-panel-' + channelId);
+  var content = document.getElementById('latest-content-' + channelId);
+
+  if (panel.style.display !== 'none') {
+    panel.style.display = 'none';
+    btn.innerHTML = 'Latest <span class="badge-free" style="margin-left:2px;">FREE</span>';
+    return;
+  }
+
+  panel.style.display = 'table-row';
+  content.textContent  = 'Loading…';
+  btn.disabled = true;
+
+  fetch('/api/channel/latest?channel_id=' + encodeURIComponent(channelId))
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(data) {
+      btn.disabled = false;
+      if (!data.videos || !data.videos.length) {
+        content.innerHTML = '<span style="color:var(--text-muted)">No videos found via RSS.</span>';
+        return;
+      }
+      var items = data.videos.map(function(v) {
+        return '<div class="latest-item">' +
+          '<span style="color:var(--text-muted);font-size:11px;white-space:nowrap;min-width:80px;">' +
+          (v.published_at ? v.published_at.slice(0, 10) : '—') + '</span>' +
+          '<a href="https://youtube.com/watch?v=' + v.video_id + '" target="_blank" ' +
+          'style="color:var(--text);font-size:12px;">' + v.title + '</a>' +
+          '<span style="margin-left:auto;font-size:10px;color:var(--text-muted);">' + v.video_id + '</span>' +
+          '</div>';
+      }).join('');
+      content.innerHTML =
+        '<div style="color:var(--text-muted);font-size:11px;margin-bottom:6px;">' +
+        data.count + ' most recent videos via TranscriptAPI RSS</div>' + items;
+    })
+    .catch(function() {
+      btn.disabled = false;
+      content.innerHTML = '<span style="color:var(--negative)">✗ Failed to load</span>';
+    });
+}
+
+
+// ── Resolve @handle / URL → UC ID ────────────────────────────────────
+function resolveChannel() {
+  var input  = document.getElementById('channel-url-input').value.trim();
+  var status = document.getElementById('resolve-status');
+  if (!input) return;
+  status.textContent = 'Resolving…';
+  status.style.color = 'var(--text-muted)';
+
+  fetch('/api/channel/resolve?input=' + encodeURIComponent(input))
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(data) {
+      document.getElementById('channel-id-input').value = data.channel_id;
+      if (data.name) document.getElementById('channel-name-input').value = data.name;
+      status.textContent = '✓ Resolved: ' + data.channel_id;
+      status.style.color = 'var(--positive)';
+    })
+    .catch(function() {
+      status.textContent = '✗ Could not resolve — try pasting the UC… ID directly';
+      status.style.color = 'var(--negative)';
+    });
+}
+
+
+// ── Discover video count + credit estimate ────────────────────────────
+function discoverChannel(channelId) {
+  var btn    = document.getElementById('discover-btn-' + channelId);
+  var wrap   = document.getElementById('discover-result-wrap-' + channelId);
+  var result = document.getElementById('discover-result-' + channelId);
+  var form   = document.getElementById('backfill-form-' + channelId);
+  var cost   = document.getElementById('backfill-cost-' + channelId);
+
+  btn.disabled    = true;
+  btn.textContent = 'Discovering…';
+  wrap.style.display   = 'block';
+  result.textContent   = 'querying YouTube…';
+  result.style.color   = 'var(--text-muted)';
+
+  fetch('/api/channel/discover?channel_id=' + encodeURIComponent(channelId))
+    .then(function(r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function(data) {
+      btn.innerHTML = 'Discover <span class="badge-free" style="margin-left:2px;">FREE</span>';
+      btn.disabled  = false;
+      if (data.missing === 0) {
+        result.innerHTML   = '<span style="color:var(--positive)">✓ All ' + data.total + ' videos already stored</span>';
+        form.style.display = 'none';
+      } else {
+        result.textContent = data.total + ' total · ' + data.in_db + ' stored';
+        result.style.color = 'var(--text-muted)';
+        cost.textContent   = '~' + data.missing + ' credits';
+        form.style.display = 'block';
+      }
+    })
+    .catch(function() {
+      btn.innerHTML      = 'Discover <span class="badge-free" style="margin-left:2px;">FREE</span>';
+      btn.disabled       = false;
+      result.innerHTML   = '<span style="color:var(--negative)">✗ Discovery failed</span>';
+    });
+}
+
+
+// ── Disable all scan buttons while any job is running ────────────────
+document.querySelectorAll('.scan-form').forEach(function(form) {
+  form.addEventListener('submit', function() {
+    var clicked = form.querySelector('button[type=submit]');
+    document.querySelectorAll('.scan-form button[type=submit]').forEach(function(btn) {
+      btn.disabled      = true;
+      btn.style.opacity = '0.5';
+      if (btn === clicked) btn.textContent = 'Running…';
+    });
+  });
+});
+</script>
+{% endblock %}

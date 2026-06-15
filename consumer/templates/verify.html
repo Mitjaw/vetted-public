@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vetted — Email Verification</title>
+  <link rel="stylesheet" href="/consumer/static/consumer.css">
+  {% if ok %}
+  <meta http-equiv="refresh" content="3;url=/">
+  {% endif %}
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card" style="text-align:center;">
+      {% if ok %}
+        <div style="font-size:48px;margin-bottom:16px;">✓</div>
+        <h1 style="font-size:20px;font-weight:600;margin:0 0 12px;color:#4ade80;">Email confirmed</h1>
+        <p style="font-size:14px;color:#bfbfbf;line-height:1.6;margin:0 0 24px;">
+          You're signed in. Redirecting to your dashboard…
+        </p>
+        <a href="/" style="display:inline-block;font-size:13px;color:#d97706;text-decoration:none;">Go now →</a>
+      {% else %}
+        <div style="font-size:48px;margin-bottom:16px;">⚠</div>
+        <h1 style="font-size:20px;font-weight:600;margin:0 0 12px;color:#f87171;">Couldn't verify</h1>
+        <p style="font-size:14px;color:#bfbfbf;line-height:1.6;margin:0 0 24px;">
+          {% if reason == "missing_token" %}
+            No verification token was provided.
+          {% elif reason == "invalid_token" %}
+            This link isn't valid. It may have already been used.
+          {% elif reason == "expired" %}
+            This link has expired. Sign up again to get a fresh one.
+          {% else %}
+            Something went wrong.
+          {% endif %}
+        </p>
+        <a href="/signup" style="display:inline-block;font-size:13px;color:#d97706;text-decoration:none;">Sign up again →</a>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

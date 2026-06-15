@@ -1,0 +1,127 @@
+{
+  "two_pass_haiku_sonnet": [
+    {
+      "video_id": "ZEniGrLxkpY",
+      "title": " 2 Stocks To BUY NOW In March 2026",
+      "metrics": {
+        "precision": 0.6,
+        "recall": 0.6,
+        "f1": 0.6,
+        "sentiment_acc": 1.0,
+        "rec_acc": 1.0,
+        "confidence_acc": 1.0,
+        "found": [
+          "GLD",
+          "MOS",
+          "SLV"
+        ],
+        "missed": [
+          "UCO",
+          "VMET"
+        ],
+        "hallucinated": [
+          "VME",
+          "ZS"
+        ],
+        "n_expected": 5,
+        "n_returned": 5,
+        "ticker_details": [
+          {
+            "ticker": "GLD",
+            "ai_confidence": 0.78,
+            "in_range": true,
+            "conf_min": 0.4,
+            "conf_max": 1
+          },
+          {
+            "ticker": "MOS",
+            "ai_confidence": 0.96,
+            "in_range": true,
+            "conf_min": 0.9,
+            "conf_max": 1
+          },
+          {
+            "ticker": "SLV",
+            "ai_confidence": 0.6,
+            "in_range": true,
+            "conf_min": 0.4,
+            "conf_max": 1
+          }
+        ]
+      },
+      "missed": [
+        "UCO",
+        "VMET"
+      ],
+      "hallucinated": [
+        "VME",
+        "ZS"
+      ],
+      "found": [
+        "GLD",
+        "MOS",
+        "SLV"
+      ],
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "ai_confidence": 0.78,
+          "in_range": true,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "ai_confidence": 0.96,
+          "in_range": true,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "ai_confidence": 0.6,
+          "in_range": true,
+          "conf_min": 0.4,
+          "conf_max": 1
+        }
+      ],
+      "usage": {
+        "input_tokens": 10715,
+        "output_tokens": 1210,
+        "cost_usd": 0.035938
+      }
+    }
+  ],
+  "_config_snapshots": {
+    "two_pass_haiku_sonnet": {
+      "name": "two_pass_haiku_sonnet",
+      "description": "",
+      "pipeline": "two_pass",
+      "pass1": {
+        "model": "claude-haiku-4-5-20251001",
+        "max_tokens": 8192,
+        "temperature": 1,
+        "top_p": null,
+        "top_k": null,
+        "system_prompt": "You are a specialist financial transcript scanner with deep experience reading unpunctuated auto-generated YouTube transcripts in German and English. Your sole job: find EVERY investment vehicle mentioned \u2014 stocks, ETFs, crypto, and commodities. Cast a wide net. No sentiment, no judgement \u2014 discovery only. Fix transcription errors ('in Vidia' = NVIDIA, 'A MD' = AMD). Prefer US ADR ticker where one exists; otherwise use local format (SAP.DE, P911.DE, BMW.DE). For commodities use the standard ETF proxy ticker: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER. Do NOT use spot/futures tickers like XAUUSD or GC=F. For commodities and crypto: company_name must be the literal string 'NULL'. asset_type: 'stock', 'etf', 'crypto', or 'commodity'. Return entries in the order they first appear in the transcript. Do not invent tickers not present in the transcript.",
+        "user_prompt_template": "Language: {language}\n{title_hint}\nTranscript:\n{transcript}\n\nReturn ONLY valid JSON. No preamble, no markdown.\n\nRequired output format:\n{{\"stocks\": [{{\"ticker\": \"AAPL\", \"company_name\": \"Apple Inc.\", \"asset_type\": \"stock\"}}, {{\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\"}}]}}"
+      },
+      "pass2": {
+        "model": "claude-sonnet-4-6",
+        "max_tokens": 8192,
+        "temperature": 1,
+        "top_p": null,
+        "top_k": null,
+        "system_prompt": "You are a sharp-tongued senior financial analyst expert at cutting through vague YouTuber commentary to identify the real signal. You know the difference between genuine conviction and performative neutrality. For each investment vehicle in the provided list: return exactly one mention object. Do not skip any. Do not add tickers beyond those listed. Use the exact ticker string as provided. If a vehicle cannot be found in the transcript: is_real_stock_mention=false, confidence=0.0, mention_count=0, explain in context. For commodities (gold=GLD, silver=SLV, oil=USO, etc.) and crypto: company_name must be the literal string 'NULL' \u2014 do not invent a company name. Sentiment: lean toward bullish/bearish when any directional signal is present \u2014 reserve neutral for genuinely balanced or purely informational mentions. Confidence reflects clarity of sentiment expression, not certainty about the asset's prospects.",
+        "user_prompt_template": "Language: {language}\n{title_hint}\nAnalyze exactly {n} investment vehicle{plural}:\n{stock_list}\n\nTranscript:\n{transcript}\n\nReturn ONLY valid JSON. No preamble, no markdown.\n\n{{\"mentions\": [{{\"ticker\": \"AAPL\", \"company_name\": \"Apple Inc.\", \"asset_type\": \"stock\", \"is_real_stock_mention\": true, \"sentiment\": \"bullish\", \"confidence\": 0.82, \"recommendation\": \"buy\", \"mention_count\": 4, \"context\": \"...\"}}, {{\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\", \"is_real_stock_mention\": true, \"sentiment\": \"bullish\", \"confidence\": 0.75, \"recommendation\": \"buy\", \"mention_count\": 2, \"context\": \"...\"}}]}}"
+      },
+      "created_at": "2026-03-16T21:26:53.235595"
+    }
+  },
+  "_meta": {
+    "timestamp": "2026-03-16-21-27-30",
+    "versions": {
+      "two_pass_haiku_sonnet": 1
+    }
+  }
+}

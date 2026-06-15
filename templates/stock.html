@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% block title %}Vetted — {{ ticker }}{% endblock %}
+
+{% block content %}
+
+<!-- Section 1: Header row -->
+<div class="page-header section" style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+  <h1 style="margin: 0;">{{ ticker }}</h1>
+  <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+    {% set bull_total = mentions | selectattr('sentiment', 'equalto', 'bullish') | list | length %}
+    {% set bear_total = mentions | selectattr('sentiment', 'equalto', 'bearish') | list | length %}
+    {% set neut_total = mentions | selectattr('sentiment', 'equalto', 'neutral') | list | length %}
+    {% if bull_total > 0 %}
+    <span class="badge bullish">{{ bull_total }} Bullish</span>
+    {% endif %}
+    {% if bear_total > 0 %}
+    <span class="badge bearish">{{ bear_total }} Bearish</span>
+    {% endif %}
+    {% if neut_total > 0 %}
+    <span class="badge neutral">{{ neut_total }} Neutral</span>
+    {% endif %}
+  </div>
+</div>
+
+<div class="section" style="display:flex; gap:8px; align-items:center;">
+  <span style="font-size:12px; color:var(--text-muted); margin-right:4px;">Time range:</span>
+  {% for label, d in [('30d', 30), ('90d', 90), ('1y', 365), ('All', 0)] %}
+  <a href="/stock/{{ ticker }}?days={{ d }}"
+     style="padding:4px 12px; border-radius:4px; font-size:12px; font-weight:600; text-decoration:none;
+            background: {{ 'var(--accent)' if days == d else 'var(--bg-card)' }};
+            color: {{ '#fff' if days == d else 'var(--text-muted)' }};
+            border: 1px solid {{ 'var(--accent)' if days == d else 'var(--border)' }};">
+    {{ label }}
+  </a>
+  {% endfor %}
+</div>
+
+<!-- Section 2: Two column 50/50 -->
+<div class="two-col two-col-50-50 section">
+
+  <!-- Left: Sentiment breakdown -->
+  <div class="card">
+    <div class="card-title">Sentiment Breakdown</div>
+    <div class="sentiment-3col">
+      <div style="text-align: center; padding: 16px 8px;">
+        <div style="font-size: 36px; font-weight: 700; color: var(--positive);">{{ bull_total }}</div>
+        <div style="font-size: 12px; font-weight: 600; color: var(--positive); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">Bullish</div>
+      </div>
+      <div style="text-align: center; padding: 16px 8px; border-left: 1px solid var(--border); border-right: 1px solid var(--border);">
+        <div style="font-size: 36px; font-weight: 700; color: var(--negative);">{{ bear_total }}</div>
+        <div style="font-size: 12px; font-weight: 600; color: var(--negative); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">Bearish</div>
+      </div>
+      <div style="text-align: center; padding: 16px 8px;">
+        <div style="font-size: 36px; font-weight: 700; color: var(--neutral);">{{ neut_total }}</div>
+        <div style="font-size: 12px; font-weight: 600; color: var(--neutral); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px;">Neutral</div>
+      </div>
+    </div>
+
+    {% set total_all = bull_total + bear_total + neut_total %}
+    {% if total_all > 0 %}
+    <div style="margin-top: 20px;">
+      <div class="sentiment-bar" style="height: 10px; border-radius: 5px;">
+        {% if bull_total > 0 %}
+        <div class="seg-bullish" style="width: {{ (bull_total / total_all * 100) | round(1) }}%;"></div>
+        {% endif %}
+        {% if bear_total > 0 %}
+        <div class="seg-bearish" style="width: {{ (bear_total / total_all * 100) | round(1) }}%;"></div>
+        {% endif %}
+        {% if neut_total > 0 %}
+        <div class="seg-neutral" style="width: {{ (neut_total / total_all * 100) | round(1) }}%;"></div>
+        {% endif %}
+      </div>
+      <div style="display: flex; gap: 16px; margin-top: 8px; font-size: 11px; color: var(--text-muted);">
+        <span style="color: var(--positive);">{{ (bull_total / total_all * 100) | round(0) | int }}% Bullish</span>
+        <span style="color: var(--negative);">{{ (bear_total / total_all * 100) | round(0) | int }}% Bearish</span>
+        <span style="color: var(--neutral);">{{ (neut_total / total_all * 100) | round(0) | int }}% Neutral</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Right: ROI chart -->
+  <div class="card">
+    <div class="card-title">ROI Over Time</div>
+    {% if roi_data and roi_data | length > 0 %}
+    {% set roi_dates = roi_data | map(attribute='date') | list %}
+    {% set roi_7d_values = roi_data | map(attribute='roi_7d') | list %}
+    {% set roi_30d_values = roi_data | map(attribute='roi_30d') | list %}
+    <canvas id="roiChart" style="max-height: 220px;"></canvas>
+    <script>
+    (function() {
+      const ctx = document.getElementById('roiChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: {{ roi_dates | tojson }},
+          datasets: [{
+            label: 'ROI 7d (%)',
+            data: {{ roi_7d_values | tojson }},
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            tension: 0.3,
+            pointRadius: 3,
+          }, {
+            label: 'ROI 30d (%)',
+            data: {{ roi_30d_values | tojson }},
+            borderColor: '#06b6d4',
+            backgroundColor: 'rgba(6,182,212,0.1)',
+            tension: 0.3,
+            pointRadius: 3,
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: { legend: { labels: { color: '#e5e5e5' } } },
+          scales: {
+            x: { ticks: { color: '#737373' }, grid: { color: '#1c1c1c' } },
+            y: { ticks: { color: '#737373', callback: v => v + '%' }, grid: { color: '#1c1c1c' } }
+          }
+        }
+      });
+    })();
+    </script>
+    {% else %}
+    <div style="display: flex; align-items: center; justify-content: center; height: 180px; color: var(--text-muted); font-size: 14px;">
+      Not enough data yet.
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Section: Mention History Chart -->
+<div class="card section">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+    <div class="card-title" style="margin:0;">Mention History</div>
+    <div style="display:flex; gap:8px;">
+      <button id="btn-total" onclick="setMode('total')"
+        style="padding:4px 14px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;
+               background:var(--accent); color:#fff; border:1px solid var(--accent);">Total</button>
+      <button id="btn-distinct" onclick="setMode('distinct')"
+        style="padding:4px 14px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;
+               background:var(--bg-card); color:var(--text-muted); border:1px solid var(--border);">Distinct</button>
+      <button id="btn-sentiment" onclick="setMode('sentiment')"
+        style="padding:4px 14px; border-radius:4px; font-size:12px; font-weight:600; cursor:pointer;
+               background:var(--bg-card); color:var(--text-muted); border:1px solid var(--border);">By Sentiment</button>
+    </div>
+  </div>
+  <canvas id="mentionChart" style="max-height:260px;"></canvas>
+</div>
+
+<script>
+(function() {
+  let chartInstance = null;
+  let chartData = null;
+
+  fetch('/api/stock/{{ ticker }}/chart-data?days={{ days }}')
+    .then(r => r.json())
+    .then(data => {
+      chartData = data;
+      renderChart('total');
+    });
+
+  window.setMode = function(mode) {
+    ['btn-total', 'btn-distinct', 'btn-sentiment'].forEach(function(id) {
+      const active = (id === 'btn-' + mode);
+      const el = document.getElementById(id);
+      el.style.background = active ? 'var(--accent)' : 'var(--bg-card)';
+      el.style.color = active ? '#fff' : 'var(--text-muted)';
+      el.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    });
+    renderChart(mode);
+  };
+
+  function renderChart(mode) {
+    if (!chartData) return;
+    if (chartInstance) { chartInstance.destroy(); }
+    const ctx = document.getElementById('mentionChart').getContext('2d');
+    const fmtDate = function(raw) {
+      if (!raw) return raw;
+      const d = new Date(raw + 'T00:00:00');
+      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    };
+    const baseOptions = {
+      responsive: true,
+      plugins: { legend: { labels: { color: '#e5e5e5' } } },
+      scales: {
+        x: {
+          ticks: {
+            color: '#737373',
+            maxRotation: 75,
+            minRotation: 45,
+            autoSkip: false,
+            callback: function(value) { return fmtDate(this.getLabelForValue(value)); }
+          },
+          grid: { color: '#1c1c1c' }
+        },
+        y: { ticks: { color: '#737373', stepSize: 1 }, grid: { color: '#1c1c1c' }, beginAtZero: true }
+      }
+    };
+    if (mode === 'total') {
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Total Mentions (word count)',
+            data: chartData.total,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.1)',
+            tension: 0.3,
+            pointRadius: 3,
+            fill: true,
+          }]
+        },
+        options: baseOptions
+      });
+    } else if (mode === 'distinct') {
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Distinct Videos',
+            data: chartData.distinct,
+            borderColor: '#a855f7',
+            backgroundColor: 'rgba(168,85,247,0.1)',
+            tension: 0.3,
+            pointRadius: 3,
+            fill: true,
+          }]
+        },
+        options: baseOptions
+      });
+    } else {
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [
+            {
+              label: 'Bullish',
+              data: chartData.bullish,
+              borderColor: '#22c55e',
+              backgroundColor: 'rgba(34,197,94,0.08)',
+              tension: 0.3,
+              pointRadius: 3,
+            },
+            {
+              label: 'Bearish',
+              data: chartData.bearish,
+              borderColor: '#ef4444',
+              backgroundColor: 'rgba(239,68,68,0.08)',
+              tension: 0.3,
+              pointRadius: 3,
+            },
+            {
+              label: 'Neutral',
+              data: chartData.neutral,
+              borderColor: '#eab308',
+              backgroundColor: 'rgba(234,179,8,0.08)',
+              tension: 0.3,
+              pointRadius: 3,
+            }
+          ]
+        },
+        options: baseOptions
+      });
+    }
+  }
+})();
+</script>
+
+<!-- Section 3: All Mentions table -->
+<div class="card section">
+  <div class="card-title">
+    {% if days == 0 %}All time{% elif days == 30 %}Last 30 days{% elif days == 90 %}Last 90 days{% elif days == 365 %}Last year{% else %}Last {{ days }} days{% endif %} — All Mentions
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Channel</th>
+          <th>Video Title</th>
+          <th>Sentiment</th>
+          <th>Confidence</th>
+          <th>Recommendation</th>
+          <th title="Ticker or company name found verbatim in transcript">Verified</th>
+          <th>Quote</th>
+          <th>ROI 7d</th>
+          <th>ROI 30d</th>
+          <th>ROI Current</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in mentions %}
+        <tr>
+          <td style="white-space: nowrap; color: var(--text-muted); font-size: 12px;">
+            <a href="/channel/{{ m.channel_id }}">{{ m.upload_date }}</a>
+          </td>
+          <td><a href="/channel/{{ m.channel_id }}">{{ m.channel_name }}</a></td>
+          <td>
+            <a href="https://youtube.com/watch?v={{ m.video_id }}" target="_blank" rel="noopener">
+              {{ m.video_title }}
+            </a>
+          </td>
+          <td>
+            <span class="badge {{ m.sentiment | lower }}">{{ m.sentiment }}</span>
+          </td>
+          <td style="color: var(--text-muted);">
+            {% if m.confidence is not none %}
+              {{ "%.0f" | format(m.confidence * 100) }}%
+            {% else %}
+              —
+            {% endif %}
+          </td>
+          <td style="font-size: 12px; color: var(--text-muted);">{{ m.recommendation or '—' }}</td>
+          <td style="text-align:center;">
+            {% if m.verified == 1 %}
+              <span title="Found in transcript" style="color:var(--positive); font-size:14px;">✓</span>
+            {% elif m.verified == 0 %}
+              <span title="Not found in transcript" style="color:var(--text-muted); font-size:14px;">?</span>
+            {% else %}
+              <span style="color:var(--text-muted);">—</span>
+            {% endif %}
+          </td>
+          <td style="font-size: 12px; max-width: 260px;">
+            {% if m.context %}
+            <span
+              data-context="{{ m.context | e }}"
+              data-channel="{{ m.channel_name | e }}"
+              data-title="{{ m.video_title | e }}"
+              data-sentiment="{{ m.sentiment }}"
+              data-confidence="{{ m.confidence or 0 }}"
+              data-recommendation="{{ m.recommendation or '' }}"
+              data-verified="{{ m.verified }}"
+              onclick="showContext(this)"
+              style="color:var(--text-muted); cursor:pointer; display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; border-bottom:1px dashed var(--border); padding-bottom:1px;"
+              title="Click to read full quote">
+              {{ m.context[:100] }}{% if m.context | length > 100 %}…{% endif %}
+            </span>
+            {% else %}
+            <span style="color:var(--text-muted);">—</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if m.roi_7d is not none %}
+              <span class="{{ 'roi-positive' if m.roi_7d >= 0 else 'roi-negative' }}">
+                {{ "%+.1f" | format(m.roi_7d) }}%
+              </span>
+            {% else %}
+              <span class="roi-na">N/A</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if m.roi_30d is not none %}
+              <span class="{{ 'roi-positive' if m.roi_30d >= 0 else 'roi-negative' }}">
+                {{ "%+.1f" | format(m.roi_30d) }}%
+              </span>
+            {% else %}
+              <span class="roi-na">N/A</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if m.roi_current is not none %}
+              <span class="{{ 'roi-positive' if m.roi_current >= 0 else 'roi-negative' }}">
+                {{ "%+.1f" | format(m.roi_current) }}%
+              </span>
+            {% else %}
+              <span class="roi-na">N/A</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9" style="color: var(--text-muted); text-align: center; padding: 24px;">No mentions found for {{ ticker }}.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Context modal -->
+<div id="ctx-overlay" onclick="hideContext()" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:200; align-items:center; justify-content:center;">
+  <div onclick="event.stopPropagation()" style="background:var(--bg-card); border:1px solid var(--border); border-radius:10px; max-width:600px; width:90%; padding:28px; position:relative;">
+    <button onclick="hideContext()" style="position:absolute; top:14px; right:16px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; line-height:1;">&times;</button>
+
+    <div style="font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-muted); margin-bottom:6px;" id="ctx-meta"></div>
+    <div style="font-size:13px; color:var(--text); margin-bottom:20px; line-height:1.5;" id="ctx-video"></div>
+
+    <div style="display:flex; gap:8px; margin-bottom:20px;" id="ctx-badges"></div>
+
+    <div style="background:var(--bg-raised); border-left:3px solid var(--accent); border-radius:4px; padding:14px 16px;">
+      <div style="font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.07em; color:var(--text-muted); margin-bottom:8px;">Transcript quote</div>
+      <p id="ctx-text" style="margin:0; font-size:14px; color:var(--text); line-height:1.7; font-style:italic;"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+function showContext(el) {
+  const context = el.dataset.context;
+  const channel = el.dataset.channel;
+  const videoTitle = el.dataset.title;
+  const sentiment = el.dataset.sentiment;
+  const confidence = parseFloat(el.dataset.confidence) || 0;
+  const recommendation = el.dataset.recommendation;
+  const verified = el.dataset.verified;
+
+  document.getElementById('ctx-meta').textContent = channel;
+  document.getElementById('ctx-video').textContent = videoTitle;
+  document.getElementById('ctx-text').textContent = context;
+
+  const sentColors = { bullish: ['#22c55e','rgba(34,197,94,0.15)'], bearish: ['#ef4444','rgba(239,68,68,0.15)'], neutral: ['#f59e0b','rgba(245,158,11,0.15)'] };
+  const [sc, sbg] = sentColors[sentiment.toLowerCase()] || ['#6b80a8','rgba(107,128,168,0.15)'];
+  const pct = confidence ? Math.round(confidence * 100) + '% confidence' : '';
+  const rec = recommendation ? recommendation.charAt(0).toUpperCase() + recommendation.slice(1) : '';
+
+  let badges = `<span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:600; background:${sbg}; color:${sc};">${sentiment}</span>`;
+  if (pct) badges += `<span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:600; background:var(--bg-raised); color:var(--text-muted);">${pct}</span>`;
+  if (rec) badges += `<span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:600; background:var(--bg-raised); color:var(--text-muted);">${rec}</span>`;
+  if (verified === '1') badges += `<span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:600; background:rgba(34,197,94,0.12); color:var(--positive);">✓ verified</span>`;
+  else if (verified === '0') badges += `<span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:600; background:var(--bg-raised); color:var(--text-muted);">? unverified</span>`;
+  document.getElementById('ctx-badges').innerHTML = badges;
+
+  document.getElementById('ctx-overlay').style.display = 'flex';
+}
+function hideContext() {
+  document.getElementById('ctx-overlay').style.display = 'none';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideContext(); });
+</script>
+
+{% endblock %}

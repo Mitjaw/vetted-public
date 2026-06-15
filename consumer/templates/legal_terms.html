@@ -1,0 +1,43 @@
+{% extends "_legal_base.html" %}
+{% block title %}Terms of Service{% endblock %}
+{% block body %}
+<h1>Terms of Service</h1>
+<p class="updated">Last updated: 28 April 2026</p>
+
+<div class="draft-notice">
+  Draft — this is a v1 template. <strong>Have a German lawyer review</strong> before launch, especially the liability and "no financial advice" clauses.
+</div>
+
+<h2>1. What Vetted is</h2>
+<p>Vetted ("we", "us") is a research tool that aggregates publicly available data — YouTube video transcripts, stock prices, sentiment derived from those transcripts — and presents it in dashboards. <strong>Vetted is not a financial advisor, broker, or investment service.</strong> Nothing on the site is financial, tax, legal, or other professional advice.</p>
+
+<h2>2. Eligibility</h2>
+<p>You must be 18 or older to create an account. By signing up you confirm that you meet that requirement and that the email address you provide is yours.</p>
+
+<h2>3. Subscription &amp; payment</h2>
+<p>Paid subscriptions (Pro, Enterprise) are billed monthly via Stripe. Cancellation takes effect at the end of the current billing period — no pro-rated refunds. EU consumers retain the statutory 14-day right of withdrawal except where you have explicitly waived it by accessing paid features within that window.</p>
+
+<h2>4. Acceptable use</h2>
+<p>You may not (a) scrape, mirror, or republish Vetted's content at scale, (b) use Vetted to make automated trading decisions without human review, (c) attempt to reverse-engineer the extraction pipeline, or (d) circumvent rate limits or tier gating.</p>
+
+<h2>5. Data accuracy</h2>
+<p>The extraction pipeline uses large-language models that can misinterpret transcripts. We aim for high precision (we'd rather miss a mention than fabricate one) but we do not guarantee accuracy. <strong>Always verify before acting on a signal.</strong></p>
+
+<h2>6. Channel coverage</h2>
+<p>Vetted analyses publicly accessible YouTube videos. Channel rankings and accuracy scores reflect our extraction's view of public statements — they are not endorsements or accusations. If you are a channel owner and believe a specific extraction is wrong, contact us; we will review and correct.</p>
+
+<h2>7. Limitation of liability</h2>
+<p>To the fullest extent permitted by law, Vetted is provided "as is" without warranties. We are not liable for trading losses, missed opportunities, or indirect damages arising from your use of the service. Total liability is capped at the fees you paid us in the 12 months preceding the claim.</p>
+
+<h2>8. Termination</h2>
+<p>You may cancel at any time from your account page. We may suspend accounts that violate these terms, with notice where practical.</p>
+
+<h2>9. Changes</h2>
+<p>We may update these terms; substantive changes will be emailed to active subscribers at least 14 days before they take effect.</p>
+
+<h2>10. Governing law</h2>
+<p>These terms are governed by German law. Disputes will be resolved in the courts of <span class="placeholder">[city to fill in]</span>, Germany, except where mandatory consumer-protection law grants you a different venue.</p>
+
+<h2>11. Contact</h2>
+<p>Questions: <a href="mailto:hello@vetted.wilmstech.com">hello@vetted.wilmstech.com</a></p>
+{% endblock %}

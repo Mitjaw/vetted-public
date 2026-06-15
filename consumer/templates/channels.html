@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Channels{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Channels</h1>
+  <p>Pick accuracy leaderboard. Accuracy = buy recs where 30d ROI > 0. Min 15 settled picks required.</p>
+</div>
+
+<div class="card">
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Channel</th>
+          <th>Lang</th>
+          <th class="num">Videos</th>
+          <th class="num">Accuracy</th>
+          <th class="num">Bull avg ROI</th>
+          <th class="num">Bear avg ROI</th>
+          <th>Last 12 months</th>
+          <th>Last active</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in leaderboard %}
+        {% set dots = monthly_dots.get(c.id | string, []) %}
+        <tr style="cursor:pointer;" onclick="location.href='/channels/{{ c.id }}'">
+          <td style="font-weight:500;">{{ c.name }}</td>
+          <td style="color:var(--muted);font-size:12px;">{{ (c.language or 'en') | upper }}</td>
+          <td class="num">{{ c.video_count }}</td>
+          <td class="num">
+            {% if c.accuracy is not none %}
+              <span class="{{ 'roi-pos' if c.accuracy >= 55 else 'roi-neg' }}">{{ c.accuracy }}%</span>
+              <span style="font-size:10px;color:var(--muted);"> ({{ c.settled_picks }})</span>
+            {% elif c.low_sample %}
+              <span class="roi-nil">low sample</span>
+            {% else %}
+              <span class="roi-nil">—</span>
+            {% endif %}
+          </td>
+          <td class="num">
+            {% if c.bull_avg_roi is not none %}
+              <span class="{{ 'roi-pos' if c.bull_avg_roi >= 0 else 'roi-neg' }}">{{ '%+.1f'|format(c.bull_avg_roi) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td class="num">
+            {% if c.bear_avg_roi is not none %}
+              <span class="{{ 'roi-pos' if c.bear_avg_roi <= 0 else 'roi-neg' }}">{{ '%+.1f'|format(c.bear_avg_roi) }}%</span>
+            {% else %}<span class="roi-nil">—</span>{% endif %}
+          </td>
+          <td>
+            {% if dots %}
+            <div class="dots">
+              {% for d in dots %}
+              <div class="dot {% if d.accuracy is none %}dot-empty{% elif d.accuracy >= 55 %}dot-green{% elif d.accuracy >= 40 %}dot-low{% else %}dot-red{% endif %}"
+                   title="{{ d.month }}: {{ d.accuracy ~ '%' if d.accuracy is not none else 'no data' }} ({{ d.settled }} picks)"></div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </td>
+          <td style="font-size:12px;color:var(--muted);">
+            {% if c.days_since is not none %}
+              {% if c.days_since == 0 %}today
+              {% elif c.days_since == 1 %}yesterday
+              {% else %}{{ c.days_since }}d ago{% endif %}
+            {% else %}—{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vetted — Choose New Password</title>
+  <link rel="stylesheet" href="/consumer/static/consumer.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-mark">V</div>
+        <div>
+          <div class="login-logo-text">VETTED</div>
+          <div class="login-logo-sub">Intelligence Platform</div>
+        </div>
+      </div>
+
+      {% if not valid %}
+        <h1 style="font-size:18px;font-weight:600;margin:0 0 8px;color:#f87171;">Link expired</h1>
+        <p style="font-size:13px;color:#bfbfbf;line-height:1.6;margin:0 0 20px;">
+          {{ error or "This password-reset link is no longer valid." }}
+        </p>
+        <a href="/forgot" style="display:inline-block;font-size:13px;color:#d97706;text-decoration:none;">Request a new one →</a>
+      {% else %}
+        <h1 style="font-size:18px;font-weight:600;margin:0 0 8px;color:#fff;">Choose a new password</h1>
+        <p style="font-size:13px;color:#888;margin:0 0 20px;line-height:1.5;">
+          You'll be signed in once you save it.
+        </p>
+        {% if error %}<div class="error-msg" style="margin-bottom:16px;">{{ error }}</div>{% endif %}
+        <form method="POST" action="/reset" class="login-fields">
+          <input type="hidden" name="token" value="{{ token }}">
+          <div class="form-group">
+            <label for="password">New password</label>
+            <input id="password" name="password" type="password" class="form-input"
+              placeholder="At least 8 characters" required minlength="8" autocomplete="new-password">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;">
+            Save and sign in
+          </button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

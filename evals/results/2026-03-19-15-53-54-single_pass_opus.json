@@ -1,0 +1,132 @@
+{
+  "single_pass_opus": [
+    {
+      "video_id": "ZEniGrLxkpY",
+      "title": " 2 Stocks To BUY NOW In March 2026",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "f2": 0.0,
+        "sentiment_acc": null,
+        "rec_acc": null,
+        "confidence_acc": null,
+        "quality_pts": 0,
+        "quality_max": 60,
+        "quality_display": "0/60"
+      },
+      "missed": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "UCO",
+        "VMET",
+        "ZS"
+      ],
+      "hallucinated": [],
+      "found": [],
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ],
+      "usage": {
+        "input_tokens": 5441,
+        "output_tokens": 999,
+        "cost_usd": 0.05218
+      },
+      "raw_mentions": []
+    }
+  ],
+  "_config_snapshots": {
+    "single_pass_opus": {
+      "pipeline": "single_pass",
+      "pass1": {
+        "model": "claude-opus-4-6",
+        "max_tokens": 8192,
+        "temperature": 1,
+        "top_p": null,
+        "top_k": null,
+        "system_prompt": "You are a specialist financial transcript analyst. Extract every investment vehicle discussed as an investment \u2014 stocks, ETFs, crypto, and commodities. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER. Do NOT use spot/futures tickers like XAUUSD or GC=F. For commodities and crypto: company_name must be the literal string 'NULL'. Fix transcription errors. Return only valid JSON.",
+        "user_prompt_template": "You are analyzing a finance YouTube video transcript. Language: {language}.\n{title_hint}\nIMPORTANT: Be THOROUGH. Find EVERY investment vehicle \u2014 stocks, ETFs, crypto, and commodities.\n\nRules:\n1. Extract ALL stocks, ETFs, crypto, or commodities mentioned as investments\n2. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER\n3. For commodities and crypto: company_name must be the literal string 'NULL'\n4. asset_type: 'stock' / 'etf' / 'crypto' / 'commodity'\n5. Fix transcription errors: 'in Vidia' = NVIDIA, 'A MD' = AMD\n6. Ambiguous sentiment = neutral + low confidence\n7. Return ONLY valid JSON.\n\nTranscript:\n{transcript}\n\nRequired output format:\n{{\"mentions\": [{{\"ticker\": \"AAPL\", \"company_name\": \"Apple\", \"asset_type\": \"stock\", \"mention_count\": 3, \"sentiment\": \"bullish\", \"confidence\": 0.85, \"recommendation\": \"buy\", \"context\": \"...\", \"is_real_stock_mention\": true}}, {{\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\", \"mention_count\": 2, \"sentiment\": \"bullish\", \"confidence\": 0.8, \"recommendation\": \"buy\", \"context\": \"...\", \"is_real_stock_mention\": true}}]}}"
+      },
+      "pass2": null,
+      "pass3": null
+    }
+  },
+  "_meta": {
+    "timestamp": "2026-03-19-15-53-54",
+    "versions": {
+      "single_pass_opus": 2
+    }
+  }
+}

@@ -1,0 +1,395 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Dashboard{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <h1>Dashboard</h1>
+  <p>
+    Consensus signals across {{ channels_total }} tracked channels
+    {% if days > 0 %}&middot; Last {{ days }} days{% else %}&middot; All time{% endif %}
+    &middot; {{ min_channels }}+ channel agreement
+    {% if lang != 'all' %}&middot; {{ lang | upper }}{% endif %}
+    {% if sentiment != 'all' %}&middot; {{ sentiment | capitalize }}{% endif %}
+  </p>
+</div>
+
+<!-- KPI Row -->
+<div class="stat-row stat-row-4 section">
+
+  <div class="stat-box">
+    <div class="stat-label" style="margin-bottom:8px;">Consensus Picks</div>
+    <div class="stat-value" style="font-size:28px;">{{ consensus | length }}</div>
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">stocks with {{ min_channels }}+ channel agreement</div>
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-label" style="margin-bottom:8px;">Market Mood</div>
+    {% if mood_pct >= 55 %}
+      <div class="stat-value" style="font-size:28px;color:var(--positive);">{{ mood_pct }}%</div>
+    {% elif mood_pct <= 35 %}
+      <div class="stat-value" style="font-size:28px;color:var(--negative);">{{ mood_pct }}%</div>
+    {% else %}
+      <div class="stat-value" style="font-size:28px;color:var(--neutral);">{{ mood_pct }}%</div>
+    {% endif %}
+    <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">{{ mood_label }} &middot; {{ mood_bull }}B / {{ mood_bear }}Be / {{ mood_neut }}N</div>
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-label" style="margin-bottom:8px;">Best 30d ROI</div>
+    {% if best_roi %}
+      <div class="stat-value" style="font-size:28px;{% if best_roi.avg_roi_30d > 0 %}color:var(--positive);{% elif best_roi.avg_roi_30d < 0 %}color:var(--negative);{% endif %}">
+        {% if best_roi.avg_roi_30d > 0 %}+{% endif %}{{ best_roi.avg_roi_30d }}%
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;"><a href="/stock/{{ best_roi.ticker }}">{{ best_roi.ticker }}</a> avg across picks</div>
+    {% else %}
+      <div class="stat-value" style="font-size:28px;color:var(--text-muted);">—</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">No 30d ROI data yet</div>
+    {% endif %}
+  </div>
+
+  <div class="stat-box">
+    <div class="stat-label" style="margin-bottom:8px;">Top Consensus</div>
+    {% if consensus %}
+      <div class="stat-value" style="font-size:28px;">
+        <a href="/stock/{{ consensus[0].ticker }}" style="color:#fff;text-decoration:none;">{{ consensus[0].ticker }}</a>
+      </div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">{{ consensus[0].channel_count }} channels &middot; {{ consensus[0].video_count }} videos</div>
+    {% else %}
+      <div class="stat-value" style="font-size:28px;color:var(--text-muted);">—</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:6px;">No consensus stocks</div>
+    {% endif %}
+  </div>
+
+</div>
+
+<!-- Filter Bar -->
+<div class="card section" style="padding:14px 20px;">
+  <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+
+    <!-- Period -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;">Period</span>
+      <div style="display:flex;gap:4px;">
+        {% for label, val in [('7d', 7), ('30d', 30), ('90d', 90), ('1y', 365), ('All', 0)] %}
+        <button onclick="setParam('days', {{ val }})"
+          class="pill {% if days == val %}active{% endif %}">
+          {{ label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="width:1px;height:24px;background:var(--border);"></div>
+
+    <!-- Min Channels -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;white-space:nowrap;">Min Channels</span>
+      <div style="display:flex;gap:4px;">
+        {% for val in [1, 2, 3, 4, 5] %}
+        <button onclick="setParam('min_channels', {{ val }})"
+          class="pill {% if min_channels == val %}active{% endif %}">
+          {{ val }}{% if val == 5 %}+{% endif %}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="width:1px;height:24px;background:var(--border);"></div>
+
+    <!-- Language -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;">Language</span>
+      <div style="display:flex;gap:4px;">
+        {% for label, val in [('All', 'all'), ('EN', 'en'), ('DE', 'de'), ('ES', 'es')] %}
+        <button onclick="setParam('lang', '{{ val }}')"
+          class="pill {% if lang == val %}active{% endif %}">
+          {{ label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div style="width:1px;height:24px;background:var(--border);"></div>
+
+    <!-- Sentiment -->
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;">Sentiment</span>
+      <div style="display:flex;gap:4px;">
+        {% for label, val in [('All', 'all'), ('Bullish', 'bullish'), ('Bearish', 'bearish'), ('Neutral', 'neutral')] %}
+        <button onclick="setParam('sentiment', '{{ val }}')"
+          class="pill {% if sentiment == val %}active{% endif %}">
+          {{ label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Consensus Table -->
+<div class="card section">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <div class="card-title" style="margin:0;">
+      Consensus Picks
+      <span style="font-weight:400;color:var(--text-muted);margin-left:8px;">{{ consensus | length }} stocks</span>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);">Click column headers to sort</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th onclick="sortTable('ticker', false)" style="cursor:pointer;" title="Sort">Ticker ⇅</th>
+          <th onclick="sortTable('channel_count', true)" style="cursor:pointer;" title="Sort">Channels ⇅</th>
+          <th onclick="sortTable('video_count', true)" style="cursor:pointer;" title="Sort">Videos ⇅</th>
+          <th onclick="sortTable('bullish_pct', true)" style="cursor:pointer;" title="Sort">Bullish% ⇅</th>
+          <th onclick="sortTable('confidence', true)" style="cursor:pointer;" title="Sort">Confidence ⇅</th>
+          <th onclick="sortTable('roi7d', true)" style="cursor:pointer;" title="Sort">7d ROI ⇅</th>
+          <th onclick="sortTable('roi30d', true)" style="cursor:pointer;" title="Sort">30d ROI ⇅</th>
+          <th>Sentiment</th>
+        </tr>
+      </thead>
+      <tbody id="consensus-tbody">
+        {% for stock in consensus %}
+        {% set total = (stock.bullish_count + stock.bearish_count + stock.neutral_count) | float %}
+        {% set bull_pct = ((stock.bullish_count / total * 100) if total > 0 else 0) | round(1) %}
+        {% set bear_pct = ((stock.bearish_count / total * 100) if total > 0 else 0) | round(1) %}
+        {% set neut_pct = ((stock.neutral_count / total * 100) if total > 0 else 0) | round(1) %}
+        <tr
+          data-ticker="{{ stock.ticker }}"
+          data-channel_count="{{ stock.channel_count }}"
+          data-video_count="{{ stock.video_count }}"
+          data-bullish_pct="{{ bull_pct }}"
+          data-confidence="{{ ((stock.avg_confidence or 0) * 100) | round(1) }}"
+          data-roi7d="{{ stock.avg_roi_7d if stock.avg_roi_7d is not none else '' }}"
+          data-roi30d="{{ stock.avg_roi_30d if stock.avg_roi_30d is not none else '' }}"
+        >
+          <td style="color:var(--text-muted);font-size:12px;">{{ loop.index }}</td>
+          <td>
+            <a href="/stock/{{ stock.ticker }}" style="font-weight:600;">{{ stock.ticker }}</a>
+            {% if stock.company_name and stock.company_name != stock.ticker %}
+            <span style="color:var(--text-muted);font-size:11px;margin-left:4px;">{{ stock.company_name[:20] }}</span>
+            {% endif %}
+          </td>
+          <td>
+            {% if stock.channel_count >= 5 %}
+              <span style="background:rgba(16,185,129,.18);color:var(--positive);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">{{ stock.channel_count }}</span>
+            {% elif stock.channel_count >= 3 %}
+              <span style="background:rgba(245,158,11,.18);color:var(--neutral);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">{{ stock.channel_count }}</span>
+            {% else %}
+              <span style="background:var(--bg-raised);color:var(--text-muted);padding:3px 8px;border-radius:4px;font-size:12px;font-weight:700;">{{ stock.channel_count }}</span>
+            {% endif %}
+          </td>
+          <td style="color:var(--text-muted);">{{ stock.video_count }}</td>
+          <td style="{% if bull_pct >= 60 %}color:var(--positive);{% elif bull_pct <= 30 %}color:var(--negative);{% else %}color:var(--neutral);{% endif %}font-weight:600;">
+            {{ bull_pct }}%
+          </td>
+          <td style="color:var(--text-muted);">
+            {% if stock.avg_confidence is not none %}{{ (stock.avg_confidence * 100) | round(0) | int }}%{% else %}—{% endif %}
+          </td>
+          <td class="{% if stock.avg_roi_7d is not none %}{% if stock.avg_roi_7d > 0 %}roi-positive{% elif stock.avg_roi_7d < 0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if stock.avg_roi_7d is not none %}{% if stock.avg_roi_7d > 0 %}+{% endif %}{{ stock.avg_roi_7d }}%{% else %}—{% endif %}
+          </td>
+          <td class="{% if stock.avg_roi_30d is not none %}{% if stock.avg_roi_30d > 0 %}roi-positive{% elif stock.avg_roi_30d < 0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+            {% if stock.avg_roi_30d is not none %}{% if stock.avg_roi_30d > 0 %}+{% endif %}{{ stock.avg_roi_30d }}%{% else %}—{% endif %}
+          </td>
+          <td>
+            <div class="sentiment-bar" style="min-width:70px;" title="{{ bull_pct }}% bullish / {{ bear_pct }}% bearish / {{ neut_pct }}% neutral">
+              {% if bull_pct > 0 %}<div class="seg-bullish" style="width:{{ bull_pct }}%;"></div>{% endif %}
+              {% if bear_pct > 0 %}<div class="seg-bearish" style="width:{{ bear_pct }}%;"></div>{% endif %}
+              {% if neut_pct > 0 %}<div class="seg-neutral" style="width:{{ neut_pct }}%;"></div>{% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="9" style="text-align:center;color:var(--text-muted);padding:32px;">
+            No stocks found with {{ min_channels }}+ channel agreement
+            {% if days > 0 %}in the last {{ days }} days{% endif %}.
+            Try reducing <strong>Min Channels</strong> or widening the <strong>Period</strong>.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Bottom: Leaderboard + Recent Scans -->
+<div class="two-col two-col-60-40 section">
+
+  <!-- Channel Leaderboard -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div class="card-title" style="margin:0;">Channel Credibility</div>
+      <div style="display:flex;gap:4px;">
+        {% for label, val in [('7d', 7), ('30d', 30), ('90d', 90), ('All', 0)] %}
+        <button class="lb-day-btn pill {% if days == val %}active{% endif %}" data-days="{{ val }}" onclick="loadLeaderboard({{ val }})">
+          {{ label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Channel</th>
+            <th>Lang</th>
+            <th>Picks</th>
+            <th>Accuracy</th>
+            <th>Avg 30d ROI</th>
+          </tr>
+        </thead>
+        <tbody id="lb-tbody">
+          {% for ch in leaderboard %}
+          <tr>
+            <td style="color:var(--text-muted);font-size:12px;">{{ loop.index }}</td>
+            <td><a href="/channel/{{ ch.id }}">{{ ch.name }}</a></td>
+            <td><span class="lang-badge">{{ ch.language | upper }}</span></td>
+            <td style="color:var(--text-muted);">{{ ch.buy_picks }}</td>
+            <td>
+              {% if ch.accuracy is not none %}
+                <span style="font-weight:600;{% if ch.accuracy >= 60 %}color:var(--positive);{% elif ch.accuracy < 40 %}color:var(--negative);{% else %}color:var(--neutral);{% endif %}">
+                  {{ ch.accuracy }}%
+                </span>
+                <span style="color:var(--text-muted);font-size:11px;">({{ ch.picks_with_roi }} picks)</span>
+              {% else %}
+                <span style="color:var(--text-muted);">Pending</span>
+              {% endif %}
+            </td>
+            <td class="{% if ch.avg_roi_30d is not none %}{% if ch.avg_roi_30d > 0 %}roi-positive{% elif ch.avg_roi_30d < 0 %}roi-negative{% else %}roi-na{% endif %}{% else %}roi-na{% endif %}">
+              {% if ch.avg_roi_30d is not none %}{% if ch.avg_roi_30d > 0 %}+{% endif %}{{ ch.avg_roi_30d }}%{% else %}—{% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">
+              No pick data yet for this period.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Scans -->
+  <div class="card">
+    <div class="card-title">Recent Scans</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Channel</th>
+            <th>Last Scanned</th>
+            <th>Videos Today</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for scan in recent_scans %}
+          <tr>
+            <td><a href="/channel/{{ scan.id }}">{{ scan.name }}</a></td>
+            <td style="color:var(--text-muted);font-size:12px;">{{ scan.last_scanned }}</td>
+            <td style="color:{% if scan.videos_today > 0 %}var(--positive){% else %}var(--text-muted){% endif %};">
+              {{ scan.videos_today }}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="3" style="text-align:center;color:var(--text-muted);padding:24px;">No recent scans.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // Filter navigation
+  window.setParam = function(key, value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(key, value);
+    window.location.href = url.toString();
+  };
+
+  // Table sort
+  let sortState = { col: null, asc: false };
+  window.sortTable = function(col, numeric) {
+    const tbody = document.getElementById('consensus-tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr[data-ticker]'));
+    if (!rows.length) return;
+
+    const asc = sortState.col === col ? !sortState.asc : false;
+    sortState = { col, asc };
+
+    rows.sort(function(a, b) {
+      const va = a.dataset[col] || '';
+      const vb = b.dataset[col] || '';
+      if (numeric) {
+        const na = parseFloat(va);
+        const nb = parseFloat(vb);
+        const fa = isNaN(na) ? -Infinity : na;
+        const fb = isNaN(nb) ? -Infinity : nb;
+        return asc ? fa - fb : fb - fa;
+      }
+      return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+    });
+    rows.forEach(function(r) { tbody.appendChild(r); });
+    // Re-number rank column
+    rows.forEach(function(r, i) {
+      const cell = r.querySelector('td:first-child');
+      if (cell) cell.textContent = i + 1;
+    });
+  };
+
+  // Leaderboard dynamic load
+  let currentLbDays = {{ days }};
+
+  window.loadLeaderboard = function(days) {
+    currentLbDays = days;
+    document.querySelectorAll('.lb-day-btn').forEach(function(btn) {
+      btn.classList.toggle('active', parseInt(btn.dataset.days) === days);
+    });
+    fetch('/api/leaderboard?days=' + days)
+      .then(function(r) { return r.json(); })
+      .then(renderLeaderboard)
+      .catch(function() {});
+  };
+
+  function renderLeaderboard(data) {
+    const tbody = document.getElementById('lb-tbody');
+    if (!data.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:24px;">No pick data yet for this period.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(function(ch, i) {
+      const acc = ch.accuracy !== null
+        ? '<span style="font-weight:600;color:' + (ch.accuracy >= 60 ? 'var(--positive)' : ch.accuracy < 40 ? 'var(--negative)' : 'var(--neutral)') + ';">' + ch.accuracy.toFixed(1) + '%</span> <span style="color:var(--text-muted);font-size:11px;">(' + ch.picks_with_roi + ' picks)</span>'
+        : '<span style="color:var(--text-muted);">Pending</span>';
+      const roiVal = ch.avg_roi_30d;
+      const roi = roiVal !== null
+        ? '<span style="font-weight:600;color:' + (roiVal > 0 ? 'var(--positive)' : roiVal < 0 ? 'var(--negative)' : 'var(--text-muted)') + ';">' + (roiVal > 0 ? '+' : '') + roiVal.toFixed(1) + '%</span>'
+        : '<span style="color:var(--text-muted);">—</span>';
+      return '<tr>' +
+        '<td style="color:var(--text-muted);font-size:12px;">' + (i + 1) + '</td>' +
+        '<td><a href="/channel/' + ch.id + '">' + ch.name + '</a></td>' +
+        '<td><span class="lang-badge">' + ch.language.toUpperCase() + '</span></td>' +
+        '<td style="color:var(--text-muted);">' + ch.buy_picks + '</td>' +
+        '<td>' + acc + '</td>' +
+        '<td>' + roi + '</td>' +
+        '</tr>';
+    }).join('');
+  }
+})();
+</script>
+
+{% endblock %}

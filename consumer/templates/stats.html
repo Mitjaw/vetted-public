@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Stats{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Stats</h1>
+  <p>Full database overview — all channels, all picks, all time.</p>
+</div>
+
+<div class="kpi-grid">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ summary.total_mentions or 0 }}</div>
+    <div class="kpi-label">Total mentions</div>
+    <div class="kpi-delta">+{{ summary.week_mentions or 0 }} this week</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ summary.total_videos or 0 }}</div>
+    <div class="kpi-label">Videos scanned</div>
+    <div class="kpi-delta">+{{ summary.week_videos or 0 }} this week</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ summary.total_channels or 0 }}</div>
+    <div class="kpi-label">Channels tracked</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ summary.settled_roi or 0 }}</div>
+    <div class="kpi-label">ROI outcomes settled</div>
+  </div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <h2>ROI distribution (30d)</h2>
+    <canvas id="roiHist" height="180"></canvas>
+  </div>
+  <div class="card">
+    <h2>Monthly mention volume</h2>
+    <canvas id="monthChart" height="180"></canvas>
+  </div>
+</div>
+
+<div class="two-col">
+  {% if best %}
+  <div class="card">
+    <h2>Best picks (30d ROI)</h2>
+    <table>
+      <thead><tr><th>Ticker</th><th>Channel</th><th>Date</th><th class="num">ROI 30d</th></tr></thead>
+      <tbody>
+        {% for r in best %}
+        <tr>
+          <td><a href="/stocks/{{ r.ticker }}" style="font-weight:600;">{{ r.ticker }}</a></td>
+          <td style="font-size:12px;color:var(--muted);">{{ r.channel_name }}</td>
+          <td style="font-size:12px;color:var(--muted);">{{ r.upload_date }}</td>
+          <td class="num"><span class="roi-pos">{{ '%+.1f'|format(r.roi_30d) }}%</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% if worst %}
+  <div class="card">
+    <h2>Worst picks (30d ROI)</h2>
+    <table>
+      <thead><tr><th>Ticker</th><th>Channel</th><th>Date</th><th class="num">ROI 30d</th></tr></thead>
+      <tbody>
+        {% for r in worst %}
+        <tr>
+          <td><a href="/stocks/{{ r.ticker }}" style="font-weight:600;">{{ r.ticker }}</a></td>
+          <td style="font-size:12px;color:var(--muted);">{{ r.channel_name }}</td>
+          <td style="font-size:12px;color:var(--muted);">{{ r.upload_date }}</td>
+          <td class="num"><span class="roi-neg">{{ '%+.1f'|format(r.roi_30d) }}%</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const histData  = {{ roi_hist | tojson }};
+const monthData = {{ monthly_data | tojson }};
+
+new Chart(document.getElementById('roiHist'), {
+  type: 'bar',
+  data: {
+    labels: histData.map(r => r.label),
+    datasets: [{
+      data:  histData.map(r => r.count),
+      backgroundColor: histData.map(r => r.positive ? 'rgba(74,222,128,.5)' : 'rgba(239,68,68,.4)'),
+      borderColor:     histData.map(r => r.positive ? '#4ade80' : '#ef4444'),
+      borderWidth: 1,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } },
+      y: { ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } }
+    }
+  }
+});
+
+new Chart(document.getElementById('monthChart'), {
+  type: 'bar',
+  data: {
+    labels: monthData.map(r => r.month),
+    datasets: [
+      { label: 'Bullish', data: monthData.map(r => r.bull),    backgroundColor: 'rgba(74,222,128,.5)',  borderColor: '#4ade80', borderWidth: 1 },
+      { label: 'Bearish', data: monthData.map(r => r.bear),    backgroundColor: 'rgba(239,68,68,.4)',   borderColor: '#ef4444', borderWidth: 1 },
+      { label: 'Neutral', data: monthData.map(r => r.neutral), backgroundColor: 'rgba(255,255,255,.06)', borderColor: '#333',    borderWidth: 1 },
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { labels: { color: '#888', font: { size: 10 } } } },
+    scales: {
+      x: { stacked: true, ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } },
+      y: { stacked: true, ticks: { color: '#555', font: { size: 10 } }, grid: { color: '#1a1a1a' } }
+    }
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,631 @@
+{
+  "single_pass_opus": [
+    {
+      "video_id": "5e19vrGm5ic",
+      "title": "AI Biggest Surprise is Coming, These are the Stocks to Buy",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.96,
+        "f1": 0.98,
+        "f2": 0.968,
+        "sentiment_acc": 0.889,
+        "rec_acc": 0.375,
+        "confidence_acc": 0.875,
+        "quality_pts": 178,
+        "quality_max": 222,
+        "quality_display": "178/222"
+      },
+      "missed": [
+        "INX"
+      ],
+      "hallucinated": [],
+      "found": [
+        "ACN",
+        "AMZN",
+        "BTC",
+        "CMG",
+        "CRM",
+        "CRWD",
+        "DRI",
+        "ETH",
+        "ETHA",
+        "ETHB",
+        "FTNT",
+        "GOOGL",
+        "META",
+        "MSFT",
+        "NBIS",
+        "NOW",
+        "NVDA",
+        "ORCL",
+        "PANW",
+        "QSR",
+        "SMCI",
+        "TXRH",
+        "WDAY",
+        "ZS"
+      ],
+      "ticker_details": [
+        {
+          "ticker": "ACN",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.88,
+          "in_range": false,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "AMZN",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.5,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "BTC",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.75,
+          "in_range": true,
+          "conf_min": 0.7,
+          "conf_max": 1
+        },
+        {
+          "ticker": "CMG",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": false,
+          "ai_confidence": 0.6,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "CRM",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.9,
+          "in_range": true,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "CRWD",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.6,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "DRI",
+          "found": true,
+          "quality_pts": 8,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": true,
+          "ai_confidence": 0.7,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ETH",
+          "found": true,
+          "quality_pts": 8,
+          "quality_max": 10,
+          "sentiment_match": false,
+          "rec_match": true,
+          "ai_confidence": 0.8,
+          "in_range": true,
+          "conf_min": 0.8,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ETHA",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.9,
+          "in_range": true,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ETHB",
+          "found": true,
+          "quality_pts": 8,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": false,
+          "ai_confidence": 0.8,
+          "in_range": true,
+          "conf_min": 0.7,
+          "conf_max": 1
+        },
+        {
+          "ticker": "FTNT",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.6,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "GOOGL",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.5,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "INX",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "META",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.5,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "MSFT",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.5,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NBIS",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.8,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NOW",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.65,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "NVDA",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.85,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "ORCL",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.9,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "PANW",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.6,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "QSR",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.5,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "SMCI",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.92,
+          "in_range": true,
+          "conf_min": 0.8,
+          "conf_max": 1
+        },
+        {
+          "ticker": "TXRH",
+          "found": true,
+          "quality_pts": 6,
+          "quality_max": 8,
+          "sentiment_match": null,
+          "rec_match": false,
+          "ai_confidence": 0.6,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        },
+        {
+          "ticker": "WDAY",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.8,
+          "in_range": true,
+          "conf_min": 0.8,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": true,
+          "quality_pts": 10,
+          "quality_max": 10,
+          "sentiment_match": true,
+          "rec_match": true,
+          "ai_confidence": 0.88,
+          "in_range": null,
+          "conf_min": null,
+          "conf_max": null
+        }
+      ],
+      "usage": {
+        "input_tokens": 3892,
+        "output_tokens": 2332,
+        "cost_usd": 0.07776
+      },
+      "raw_mentions": [
+        {
+          "ticker": "NVDA",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.85
+        },
+        {
+          "ticker": "ORCL",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.9
+        },
+        {
+          "ticker": "SMCI",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.92
+        },
+        {
+          "ticker": "CRM",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.9
+        },
+        {
+          "ticker": "ACN",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.88
+        },
+        {
+          "ticker": "ZS",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.88
+        },
+        {
+          "ticker": "NOW",
+          "sentiment": "bearish",
+          "recommendation": "none",
+          "confidence": 0.65
+        },
+        {
+          "ticker": "CRWD",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.6
+        },
+        {
+          "ticker": "PANW",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.6
+        },
+        {
+          "ticker": "FTNT",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.6
+        },
+        {
+          "ticker": "WDAY",
+          "sentiment": "bearish",
+          "recommendation": "sell",
+          "confidence": 0.8
+        },
+        {
+          "ticker": "DRI",
+          "sentiment": "neutral",
+          "recommendation": "hold",
+          "confidence": 0.7
+        },
+        {
+          "ticker": "QSR",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.5
+        },
+        {
+          "ticker": "TXRH",
+          "sentiment": "bearish",
+          "recommendation": "none",
+          "confidence": 0.6
+        },
+        {
+          "ticker": "CMG",
+          "sentiment": "bearish",
+          "recommendation": "none",
+          "confidence": 0.6
+        },
+        {
+          "ticker": "NBIS",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.8
+        },
+        {
+          "ticker": "META",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.5
+        },
+        {
+          "ticker": "GOOGL",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.5
+        },
+        {
+          "ticker": "AMZN",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.5
+        },
+        {
+          "ticker": "MSFT",
+          "sentiment": "neutral",
+          "recommendation": "none",
+          "confidence": 0.5
+        },
+        {
+          "ticker": "BTC",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.75
+        },
+        {
+          "ticker": "ETH",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.8
+        },
+        {
+          "ticker": "ETHA",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.9
+        },
+        {
+          "ticker": "ETHB",
+          "sentiment": "bullish",
+          "recommendation": "buy",
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "video_id": "ZEniGrLxkpY",
+      "title": " 2 Stocks To BUY NOW In March 2026",
+      "metrics": {
+        "precision": 1.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "f2": 0.0,
+        "sentiment_acc": null,
+        "rec_acc": null,
+        "confidence_acc": null,
+        "quality_pts": 0,
+        "quality_max": 60,
+        "quality_display": "0/60"
+      },
+      "missed": [
+        "GLD",
+        "MOS",
+        "SLV",
+        "UCO",
+        "VMET",
+        "ZS"
+      ],
+      "hallucinated": [],
+      "found": [],
+      "ticker_details": [
+        {
+          "ticker": "GLD",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "MOS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "SLV",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "UCO",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.4,
+          "conf_max": 1
+        },
+        {
+          "ticker": "VMET",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        },
+        {
+          "ticker": "ZS",
+          "found": false,
+          "quality_pts": 0,
+          "quality_max": 10,
+          "sentiment_match": null,
+          "rec_match": null,
+          "ai_confidence": null,
+          "in_range": null,
+          "conf_min": 0.9,
+          "conf_max": 1
+        }
+      ],
+      "usage": {
+        "input_tokens": 5441,
+        "output_tokens": 1348,
+        "cost_usd": 0.060905
+      },
+      "raw_mentions": []
+    }
+  ],
+  "_config_snapshots": {
+    "single_pass_opus": {
+      "pipeline": "single_pass",
+      "pass1": {
+        "model": "claude-opus-4-6",
+        "max_tokens": 8192,
+        "temperature": 1,
+        "top_p": null,
+        "top_k": null,
+        "system_prompt": "You are a specialist financial transcript analyst. Extract every investment vehicle discussed as an investment \u2014 stocks, ETFs, crypto, and commodities. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER. Do NOT use spot/futures tickers like XAUUSD or GC=F. For commodities and crypto: company_name must be the literal string 'NULL'. Fix transcription errors. Return only valid JSON.",
+        "user_prompt_template": "You are analyzing a finance YouTube video transcript. Language: {language}.\n{title_hint}\nIMPORTANT: Be THOROUGH. Find EVERY investment vehicle \u2014 stocks, ETFs, crypto, and commodities.\n\nRules:\n1. Extract ALL stocks, ETFs, crypto, or commodities mentioned as investments\n2. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER\n3. For commodities and crypto: company_name must be the literal string 'NULL'\n4. asset_type: 'stock' / 'etf' / 'crypto' / 'commodity'\n5. Fix transcription errors: 'in Vidia' = NVIDIA, 'A MD' = AMD\n6. Ambiguous sentiment = neutral + low confidence\n7. Return ONLY valid JSON.\n\nTranscript:\n{transcript}\n\nRequired output format:\n{{\"mentions\": [{{\"ticker\": \"AAPL\", \"company_name\": \"Apple\", \"asset_type\": \"stock\", \"mention_count\": 3, \"sentiment\": \"bullish\", \"confidence\": 0.85, \"recommendation\": \"buy\", \"context\": \"...\", \"is_real_stock_mention\": true}}, {{\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\", \"mention_count\": 2, \"sentiment\": \"bullish\", \"confidence\": 0.8, \"recommendation\": \"buy\", \"context\": \"...\", \"is_real_stock_mention\": true}}]}}"
+      },
+      "pass2": null,
+      "pass3": null
+    }
+  },
+  "_meta": {
+    "timestamp": "2026-03-19-15-51-16",
+    "versions": {
+      "single_pass_opus": 2
+    }
+  }
+}

@@ -1,0 +1,30 @@
+module.exports = {
+  apps: [
+    {
+      name: "vetted-owner",
+      script: "venv/bin/uvicorn",
+      args: "main:app --host 127.0.0.1 --port 8000",
+      cwd: "/root/vetted",
+      interpreter: "none",
+      env_file: "/root/vetted/.env",
+      autorestart: true,
+      max_restarts: 10,
+      min_uptime: "10s",
+      error_file: "/root/.pm2/logs/vetted-owner-error.log",
+      out_file: "/root/.pm2/logs/vetted-owner-out.log",
+    },
+    {
+      name: "vetted-consumer",
+      script: "venv/bin/uvicorn",
+      args: "consumer.main:app --host 127.0.0.1 --port 8001",
+      cwd: "/root/vetted",
+      interpreter: "none",
+      env_file: "/root/vetted/.env",
+      autorestart: true,
+      max_restarts: 10,
+      min_uptime: "10s",
+      error_file: "/root/.pm2/logs/vetted-consumer-error.log",
+      out_file: "/root/.pm2/logs/vetted-consumer-out.log",
+    },
+  ],
+};

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Vetted{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --bg:        #0c0c0c;
+      --bg-card:   #141414;
+      --bg-raised: #1c1c1c;
+      --border:    #262626;
+      --accent:    #d97706;
+      --accent-hl: #f59e0b;
+      --text:      #e5e5e5;
+      --text-muted:#737373;
+      --positive:  #10b981;
+      --negative:  #ef4444;
+      --neutral:   #d97706;
+      --font: 'Geist', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--accent-hl);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border);
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+
+    /* Top bar */
+    .topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 48px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 0;
+      z-index: 100;
+    }
+
+    .topbar-logo {
+      display: flex;
+      align-items: center;
+      margin-right: 32px;
+      flex-shrink: 0;
+    }
+
+    .topbar a {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 14px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color 0.15s;
+    }
+
+    .topbar a:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .topbar a.active {
+      color: var(--text);
+      border-bottom-color: var(--accent);
+    }
+
+    .topbar-scan-btn {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: color 0.15s, border-color 0.15s;
+      white-space: nowrap;
+    }
+
+    .topbar-scan-btn:hover {
+      color: var(--accent-hl);
+      border-color: var(--accent);
+    }
+
+    /* Main content */
+    main {
+      margin-left: 0;
+      padding-top: 72px;
+      padding-left: 30px;
+      padding-right: 30px;
+      padding-bottom: 30px;
+      min-height: 100vh;
+    }
+
+    /* Flash messages */
+    .flash-messages {
+      margin-bottom: 20px;
+    }
+
+    .flash {
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--accent);
+      background: var(--bg-card);
+      color: var(--text);
+    }
+
+    .flash.success {
+      border-left-color: var(--positive);
+    }
+
+    .flash.error {
+      border-left-color: var(--negative);
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 20px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin: 0 0 16px 0;
+    }
+
+    /* Stat boxes */
+    .stat-row {
+      display: grid;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-row-3 { grid-template-columns: repeat(3, 1fr); }
+    .stat-row-4 { grid-template-columns: repeat(4, 1fr); }
+
+    .stat-box {
+      padding: 18px 20px;
+    }
+
+    .stat-box .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-box .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 10px 14px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.12s;
+    }
+
+    tbody tr:hover {
+      background: var(--bg-raised);
+    }
+
+    tbody td {
+      padding: 10px 14px;
+      font-size: 13px;
+      vertical-align: middle;
+    }
+
+    /* Sentiment badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+    }
+
+    .bullish {
+      background: rgba(16, 185, 129, 0.12);
+      color: var(--positive);
+    }
+
+    .bearish {
+      background: rgba(239, 68, 68, 0.12);
+      color: var(--negative);
+    }
+
+    .neutral {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--neutral);
+    }
+
+    /* ROI coloring */
+    .roi-positive { color: var(--positive); font-weight: 600; }
+    .roi-negative { color: var(--negative); font-weight: 600; }
+    .roi-na       { color: var(--text-muted); }
+
+    /* Layout helpers */
+    .two-col {
+      display: grid;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .two-col-60-40 { grid-template-columns: 3fr 2fr; }
+    .two-col-50-50 { grid-template-columns: 1fr 1fr; }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-header h1 {
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 6px 0;
+      color: #ffffff;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-family: var(--font);
+      transition: background 0.15s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: #b45309;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: #404040;
+      background: var(--bg-raised);
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    /* Filter pills */
+    .pill {
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      border-radius: 5px;
+      padding: 5px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: var(--font);
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .pill.active {
+      border-color: var(--accent);
+      color: var(--accent-hl);
+      background: transparent;
+    }
+
+    /* Forms */
+    .form-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .form-group input,
+    .form-group select {
+      background: var(--bg-raised);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--accent);
+    }
+
+    .form-group select option {
+      background: var(--bg-raised);
+    }
+
+    /* Language badge */
+    .lang-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border-radius: 3px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(217, 119, 6, 0.15);
+      color: var(--accent-hl);
+    }
+
+    /* Sentiment bar */
+    .sentiment-bar {
+      display: flex;
+      height: 6px;
+      border-radius: 3px;
+      overflow: hidden;
+      min-width: 80px;
+      gap: 1px;
+    }
+
+    .sentiment-bar .seg-bullish { background: var(--positive); }
+    .sentiment-bar .seg-bearish { background: var(--negative); }
+    .sentiment-bar .seg-neutral { background: var(--neutral); }
+
+    /* Sentiment 3-col grid (stock page) */
+    .sentiment-3col {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    /* ── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .two-col-60-40,
+      .two-col-50-50 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      /* Topbar: hide logo label, scroll nav links horizontally */
+      .topbar {
+        padding: 0 8px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .topbar::-webkit-scrollbar { display: none; }
+      .topbar-logo { margin-right: 8px; }
+      .topbar-logo span:last-child { display: none; } /* hide "Intelligence" sub-label */
+      .topbar a { padding: 0 10px; font-size: 12px; flex-shrink: 0; }
+      .topbar-scan-btn { flex-shrink: 0; font-size: 11px; padding: 5px 9px; }
+
+      /* Main content */
+      main {
+        padding-left: 16px;
+        padding-right: 16px;
+        padding-top: 64px;
+      }
+
+      /* Stat grids → 2 columns */
+      .stat-row-3,
+      .stat-row-4 { grid-template-columns: 1fr 1fr; }
+
+      /* Cards: reduce padding */
+      .card { padding: 16px; }
+
+      /* Sentiment 3-col stays 3 on tablet — fine */
+    }
+
+    @media (max-width: 520px) {
+      /* Stat grids → single column on small phones */
+      .stat-row-3,
+      .stat-row-4 { grid-template-columns: 1fr; }
+
+      /* Sentiment 3-col → row on small phones */
+      .sentiment-3col { grid-template-columns: repeat(3, 1fr); } /* stays 3, compact */
+
+      main { padding-left: 12px; padding-right: 12px; }
+
+      .page-header h1 { font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="topbar">
+    <div class="topbar-logo">
+      <span style="font-size:13px;font-weight:700;color:#ffffff;letter-spacing:0.05em;">VETTED</span>
+      <span style="width:1px;height:16px;background:var(--border);margin:0 12px;display:inline-block;"></span>
+      <span style="font-size:10px;font-weight:500;color:var(--text-muted);">Intelligence</span>
+    </div>
+    <a href="/" {% if request.url.path == '/' %}class="active"{% endif %}>Dashboard</a>
+    <a href="/stocks" {% if request.url.path == '/stocks' %}class="active"{% endif %}>Stocks</a>
+    <a href="/channels" {% if request.url.path.startswith('/channels') or request.url.path.startswith('/channel/') %}class="active"{% endif %}>Channels</a>
+    <a href="/analyst" {% if request.url.path == '/analyst' %}class="active"{% endif %}>Analyst</a>
+    <a href="/export" {% if request.url.path == '/export' %}class="active"{% endif %}>Export</a>
+    <a href="/admin/stats" {% if request.url.path == '/admin/stats' %}class="active"{% endif %}>Stats</a>
+    <a href="/admin/evals" {% if request.url.path == '/admin/evals' %}class="active"{% endif %}>Evals</a>
+    <a href="/admin/scheduler" {% if request.url.path == '/admin/scheduler' %}class="active"{% endif %}>Scheduler</a>
+    <form method="POST" action="/admin/scan/all" style="margin-left:auto;margin-right:0;">
+      <button type="submit" class="topbar-scan-btn">Scan All ↗</button>
+    </form>
+  </nav>
+
+  <main>
+    {% block flash %}
+    {% if msg %}
+    <div class="flash-messages">
+      <div class="flash">{{ msg }}</div>
+    </div>
+    {% endif %}
+    {% endblock %}
+
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,50 @@
+{% extends "_legal_base.html" %}
+{% block title %}Privacy Policy{% endblock %}
+{% block body %}
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: 28 April 2026</p>
+
+<div class="draft-notice">
+  Draft — review by a privacy-competent lawyer before launch. GDPR specifics around lawful basis, retention periods, and data-processor agreements (Stripe, Resend, Anthropic) need to be locked down.
+</div>
+
+<h2>1. Who we are</h2>
+<p>The data controller for personal information processed by Vetted is <span class="placeholder">[Mitja Wilms, full address]</span>. Contact: <a href="mailto:privacy@vetted.wilmstech.com">privacy@vetted.wilmstech.com</a>.</p>
+
+<h2>2. What we collect</h2>
+<ul>
+  <li><strong>Account data:</strong> email, password hash, signup timestamp, last visit.</li>
+  <li><strong>Subscription data:</strong> tier, period end, Stripe customer + subscription IDs (we do not store card numbers — Stripe does).</li>
+  <li><strong>Usage logs:</strong> IP address, request paths, response codes. Retained 30 days for security and rate-limiting.</li>
+  <li><strong>Analytics:</strong> we do not run third-party tracking by default. If we add product analytics later, we will update this policy and ask for opt-in consent.</li>
+</ul>
+
+<h2>3. What we do not collect</h2>
+<p>We do not collect biometric data, location data, or anything beyond what's needed to run the service. We do not sell or share your data with advertisers.</p>
+
+<h2>4. Channel and stock data</h2>
+<p>Vetted analyses publicly accessible YouTube videos via TranscriptAPI and stock prices from yfinance / Tiingo. This data is not personal data about you.</p>
+
+<h2>5. Lawful basis</h2>
+<p>We process account, subscription, and usage data on the basis of <strong>contract performance</strong> (Art 6(1)(b) GDPR) — we need the data to provide the service you signed up for. Email delivery uses <strong>legitimate interests</strong> (Art 6(1)(f)) for transactional messages, and explicit consent for any non-essential email.</p>
+
+<h2>6. Sub-processors</h2>
+<ul>
+  <li>Stripe (Ireland) — payment processing and Customer Portal.</li>
+  <li>Resend (USA, EU data region available) — transactional email delivery.</li>
+  <li>Hetzner (Germany) — hosting infrastructure.</li>
+  <li>Anthropic (USA) — Claude API for stock-mention extraction. Only public YouTube transcripts are sent — never your personal data.</li>
+</ul>
+
+<h2>7. Your rights (GDPR)</h2>
+<p>You can request access, correction, deletion, portability, and restriction of your personal data, and you can object to processing. Contact <a href="mailto:privacy@vetted.wilmstech.com">privacy@vetted.wilmstech.com</a>; we'll reply within 30 days. You may also lodge a complaint with the data-protection authority of <span class="placeholder">[your federal state]</span> (BfDI for federal-level matters).</p>
+
+<h2>8. Retention</h2>
+<p>Account data: until you delete the account, plus a 30-day grace period. Subscription/billing records: 10 years (German tax law, §147 AO). Usage logs: 30 days.</p>
+
+<h2>9. Cookies</h2>
+<p>We set one cookie: a session cookie used to keep you logged in. It's HTTP-only, SameSite=Lax, and contains an opaque session identifier. No advertising or tracking cookies.</p>
+
+<h2>10. Changes</h2>
+<p>We will notify active subscribers by email at least 14 days before any material change to this policy.</p>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Upgrade Required{% endblock %}
+{% block content %}
+
+<style>
+  .upgrade-wrap { max-width: 720px; margin: 64px auto; padding: 0 24px; }
+  .upgrade-card {
+    background: linear-gradient(180deg, rgba(217,119,6,0.08) 0%, rgba(22,22,22,1) 60%);
+    border: 1px solid rgba(217,119,6,0.25);
+    border-radius: 12px; padding: 48px; text-align: center;
+  }
+  .upgrade-pill {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 4px 12px; border-radius: 999px; letter-spacing: 0.05em;
+    text-transform: uppercase; color: #d97706;
+    background: rgba(217,119,6,0.12); border: 1px solid rgba(217,119,6,0.3);
+    margin-bottom: 16px;
+  }
+  .upgrade-card h1 { font-size: 26px; margin: 0 0 8px; color: #fff; font-weight: 600; }
+  .upgrade-card p.lead { font-size: 15px; color: #c4c4c4; line-height: 1.6; margin: 0 0 32px; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .tier-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 0 0 32px; text-align: left; }
+  .tier-cell {
+    background: rgba(255,255,255,0.02); border: 1px solid #2a2a2a;
+    border-radius: 8px; padding: 20px;
+  }
+  .tier-cell.recommended { border-color: rgba(217,119,6,0.4); background: rgba(217,119,6,0.04); }
+  .tier-cell h3 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: #fff; }
+  .tier-cell .price { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+  .tier-cell .price small { font-size: 12px; font-weight: 400; color: #888; }
+  .tier-cell ul { margin: 0; padding: 0 0 0 16px; font-size: 12px; color: #b4b4b4; line-height: 1.7; }
+  .upgrade-actions { display: flex; gap: 12px; justify-content: center; }
+  .btn-upgrade {
+    background: #d97706; color: #0c0c0c; font-weight: 600;
+    padding: 12px 28px; border-radius: 6px; border: none;
+    font-size: 14px; cursor: pointer; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-upgrade:hover { background: #f59e0b; }
+  .btn-secondary {
+    background: transparent; color: #b4b4b4; font-size: 13px;
+    padding: 12px 20px; border-radius: 6px; border: 1px solid #2a2a2a;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background: rgba(255,255,255,0.04); color: #fff; }
+</style>
+
+<div class="upgrade-wrap">
+  <div class="upgrade-card">
+    <span class="upgrade-pill">{{ min_tier|upper }} feature</span>
+    <h1>{{ feature }} is on Pro</h1>
+    <p class="lead">{{ feature_blurb }}</p>
+
+    <div class="tier-grid">
+      <div class="tier-cell recommended">
+        <h3>Pro</h3>
+        <div class="price">€19<small> / month</small></div>
+        <ul>
+          <li>Last 365 days of data</li>
+          <li>CSV + JSON exports</li>
+          <li>All channel detail + portfolio sim</li>
+          <li>All leads (fresh + validated)</li>
+        </ul>
+      </div>
+      <div class="tier-cell">
+        <h3>Enterprise</h3>
+        <div class="price">€99<small> / month</small></div>
+        <ul>
+          <li>All-time history</li>
+          <li>5 seats</li>
+          <li>Scheduled email exports</li>
+          <li>Everything in Pro</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="upgrade-actions">
+      <form method="POST" action="/billing/checkout?tier=pro" style="display:inline;">
+        <button type="submit" class="btn-upgrade">Upgrade to Pro →</button>
+      </form>
+      <form method="POST" action="/billing/checkout?tier=enterprise" style="display:inline;">
+        <button type="submit" class="btn-upgrade" style="background:transparent;color:#d97706;border:1px solid #d97706;">Or Enterprise →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

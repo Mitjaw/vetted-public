@@ -1,0 +1,30 @@
+{
+  "_instructions": "Copy this file, rename to <video_id>.json, delete this key. Watch the video yourself and fill in annotations.",
+  "video_id": "REPLACE_WITH_VIDEO_ID",
+  "title": "Video title here",
+  "channel": "Channel name",
+  "language": "de",
+  "notes": "Write what you observed. e.g. Host clearly bullish on NVDA, mentioned twice. BMW only briefly as something to avoid.",
+  "annotations": [
+    {
+      "ticker": "NVDA",
+      "company_name": "NVIDIA",
+      "is_real_stock_mention": true,
+      "sentiment": "bullish",
+      "recommendation": "buy",
+      "confidence_min": 0.8,
+      "confidence_max": 1.0,
+      "notes": "Host's top pick, mentioned twice — clear conviction, expect high AI confidence"
+    },
+    {
+      "ticker": "BMW.DE",
+      "company_name": "BMW AG",
+      "is_real_stock_mention": true,
+      "sentiment": "bearish",
+      "recommendation": "sell",
+      "confidence_min": null,
+      "confidence_max": null,
+      "notes": "Mentioned briefly as one to avoid — leave range null to skip confidence check"
+    }
+  ]
+}

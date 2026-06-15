@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Account{% endblock %}
+{% block content %}
+<style>
+  .account-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; max-width: 960px; }
+  @media (max-width: 768px) { .account-grid { grid-template-columns: 1fr; } }
+  .account-grid .card.span-2 { grid-column: 1 / -1; }
+  .field-row { display: grid; grid-template-columns: 140px 1fr; gap: 12px; padding: 10px 0; align-items: center; font-size: 13px; }
+  .field-row + .field-row { border-top: 1px solid rgba(255,255,255,0.06); }
+  .field-label { color: var(--text-muted, #888); font-size: 12px; }
+  .inline-form { display: flex; gap: 8px; align-items: stretch; flex-wrap: wrap; }
+  .inline-form input { flex: 1; min-width: 180px; }
+  .tier-badge {
+    display: inline-block; padding: 3px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    background: rgba(217,119,6,0.12); color: #d97706; border: 1px solid rgba(217,119,6,0.3);
+  }
+  .tier-badge.tier-free { background: rgba(150,150,150,0.1); color: #aaa; border-color: rgba(150,150,150,0.25); }
+  .tier-badge.tier-enterprise { background: rgba(60,130,220,0.12); color: #93c5fd; border-color: rgba(60,130,220,0.3); }
+  .upgrade-banner {
+    background: linear-gradient(180deg, rgba(217,119,6,0.08), transparent);
+    border: 1px solid rgba(217,119,6,0.25); border-radius: 8px;
+    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .upgrade-banner h3 { margin: 0; font-size: 14px; color: #fff; font-weight: 600; }
+  .upgrade-banner p { margin: 2px 0 0; font-size: 12px; color: #b4b4b4; }
+</style>
+
+{% if msg %}<div class="flash" style="margin-bottom:16px;">{{ msg }}</div>{% endif %}
+
+<div class="page-header">
+  <h1>Account</h1>
+  <p>Profile, subscription, security.</p>
+</div>
+
+{% set tier = user.subscription.tier if user.subscription else 'free' %}
+{% if tier == 'free' %}
+<div class="upgrade-banner">
+  <div>
+    <h3>Unlock the full dataset</h3>
+    <p>Pro: €19/mo for 365 days of history + exports. Enterprise: €99/mo for all-time + 5 seats.</p>
+  </div>
+  <form method="POST" action="/billing/checkout?tier=pro" style="margin:0;">
+    <button type="submit" class="btn btn-primary">Upgrade →</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="account-grid">
+  <div class="card">
+    <h2>Profile</h2>
+    <div class="field-row"><span class="field-label">Email</span><span>{{ user.email }}</span></div>
+    <div class="field-row">
+      <span class="field-label">Status</span>
+      <span style="color:#4ade80;">{% if user.is_active %}Active{% else %}Pending verification{% endif %}</span>
+    </div>
+    <div class="field-row"><span class="field-label">Member since</span><span>{{ user.created_at.strftime('%b %d, %Y') }}</span></div>
+  </div>
+
+  <div class="card">
+    <h2>Subscription</h2>
+    <div class="field-row">
+      <span class="field-label">Plan</span>
+      <span class="tier-badge tier-{{ tier }}">{{ tier }}</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">History</span>
+      <span>{% if user.subscription and user.subscription.history_days == 0 %}All-time{% elif user.subscription %}{{ user.subscription.history_days }} days{% else %}30 days{% endif %}</span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Renews</span>
+      <span>
+        {% if user.subscription and user.subscription.period_end %}
+          {{ user.subscription.period_end.strftime('%b %d, %Y') }}
+          {% if user.subscription.cancel_at_period_end %}<span style="color:#facc15;">(cancels then)</span>{% endif %}
+        {% else %}—{% endif %}
+      </span>
+    </div>
+    <div class="field-row">
+      <span class="field-label">Seats</span>
+      <span>{{ user.subscription.seats if user.subscription else 1 }}</span>
+    </div>
+    {% if tier != 'free' %}
+    <div style="margin-top:12px;">
+      <a href="/billing/portal" class="btn btn-secondary" style="font-size:12px;">Manage billing →</a>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Change password</h2>
+    <form method="POST" action="/account/password" class="inline-form" style="flex-direction:column;align-items:stretch;">
+      <input type="password" name="current_password" class="form-input" placeholder="Current password" required minlength="8" autocomplete="current-password">
+      <input type="password" name="new_password" class="form-input" placeholder="New password (min 8 chars)" required minlength="8" autocomplete="new-password">
+      <button type="submit" class="btn btn-primary" style="margin-top:4px;">Update password</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Change email</h2>
+    <p style="font-size:12px;color:#888;margin-top:0;">We'll send a verification link to the new address. You stay signed in until you confirm.</p>
+    <form method="POST" action="/account/email" class="inline-form" style="flex-direction:column;align-items:stretch;">
+      <input type="email" name="new_email" class="form-input" placeholder="new@email.com" required autocomplete="email">
+      <input type="password" name="current_password" class="form-input" placeholder="Current password" required minlength="8" autocomplete="current-password">
+      <button type="submit" class="btn btn-primary" style="margin-top:4px;">Send verification</button>
+    </form>
+  </div>
+
+  <div class="card span-2">
+    <form method="POST" action="/logout">
+      <button type="submit" class="btn btn-secondary">Sign out</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

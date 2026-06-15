@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vetted — Reset Password</title>
+  <link rel="stylesheet" href="/consumer/static/consumer.css">
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="login-logo-mark">V</div>
+        <div>
+          <div class="login-logo-text">VETTED</div>
+          <div class="login-logo-sub">Intelligence Platform</div>
+        </div>
+      </div>
+
+      {% if sent %}
+        <h1 style="font-size:18px;font-weight:600;margin:0 0 12px;color:#fff;">Reset link sent</h1>
+        <p style="font-size:13px;color:#bfbfbf;line-height:1.6;margin:0 0 16px;">
+          If <strong style="color:#fff;">{{ email }}</strong> is registered, you'll get a reset link in your inbox within a minute. The link is valid for one hour.
+        </p>
+        <a href="/login" style="display:inline-block;margin-top:8px;font-size:13px;color:#d97706;text-decoration:none;">← Back to sign in</a>
+      {% else %}
+        <h1 style="font-size:18px;font-weight:600;margin:0 0 8px;color:#fff;">Reset your password</h1>
+        <p style="font-size:13px;color:#888;margin:0 0 20px;line-height:1.5;">
+          Enter your email and we'll send you a link.
+        </p>
+        {% if error %}<div class="error-msg" style="margin-bottom:16px;">{{ error }}</div>{% endif %}
+        <form method="POST" action="/forgot" class="login-fields">
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" class="form-input"
+              placeholder="you@firm.com" required autocomplete="email">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px;">
+            Send reset link
+          </button>
+        </form>
+        <div style="margin-top:20px;font-size:12px;color:#888;text-align:center;">
+          <a href="/login" style="color:#888;text-decoration:none;">← Back to sign in</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

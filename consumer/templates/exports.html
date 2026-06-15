@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Exports{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Exports</h1>
+  <p>Filtered CSV and JSON downloads. Up to 10,000 rows per export.</p>
+</div>
+
+<div class="card" style="max-width:700px;">
+  <h2>Filters</h2>
+  <div class="filter-row">
+    <div class="form-group">
+      <label>Ticker</label>
+      <input type="text" id="f-ticker" class="form-input" placeholder="e.g. AAPL" style="text-transform:uppercase;">
+    </div>
+    <div class="form-group">
+      <label>Channel</label>
+      <select id="f-channel" class="form-input">
+        <option value="">All channels</option>
+        {% for ch in all_channels %}
+        <option value="{{ ch.id }}">{{ ch.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Sentiment</label>
+      <select id="f-sentiment" class="form-input">
+        <option value="all">All</option>
+        <option value="bullish">Bullish</option>
+        <option value="bearish">Bearish</option>
+        <option value="neutral">Neutral</option>
+      </select>
+    </div>
+  </div>
+  <div class="filter-row">
+    <div class="form-group">
+      <label>Date from</label>
+      <input type="date" id="f-date-from" class="form-input">
+    </div>
+    <div class="form-group">
+      <label>Date to</label>
+      <input type="date" id="f-date-to" class="form-input">
+    </div>
+    <div class="form-group">
+      <label>Asset type</label>
+      <select id="f-asset" class="form-input">
+        <option value="all">All</option>
+        <option value="stock">Stock</option>
+        <option value="etf">ETF</option>
+        <option value="crypto">Crypto</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Min confidence</label>
+      <select id="f-conf" class="form-input">
+        <option value="">Any</option>
+        <option value="0.5">50%+</option>
+        <option value="0.7">70%+</option>
+        <option value="0.85">85%+</option>
+      </select>
+    </div>
+  </div>
+
+  <div style="display:flex;align-items:center;gap:16px;margin-top:8px;">
+    <button class="btn btn-secondary" onclick="updateCount()">Preview count</button>
+    <span id="count-badge" style="font-size:13px;color:var(--muted);"></span>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:18px;">
+    <button class="btn btn-primary" onclick="download('csv')">Download CSV</button>
+    <button class="btn btn-secondary" onclick="download('json')">Download JSON</button>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+function getFilters() {
+  return {
+    ticker:      document.getElementById('f-ticker').value.trim(),
+    channel_id:  document.getElementById('f-channel').value,
+    sentiment:   document.getElementById('f-sentiment').value,
+    date_from:   document.getElementById('f-date-from').value,
+    date_to:     document.getElementById('f-date-to').value,
+    asset_type:  document.getElementById('f-asset').value,
+    min_confidence: document.getElementById('f-conf').value,
+  };
+}
+
+function buildQS(extra) {
+  const f = { ...getFilters(), ...extra };
+  return Object.entries(f).filter(([,v]) => v).map(([k,v]) => `${k}=${encodeURIComponent(v)}`).join('&');
+}
+
+async function updateCount() {
+  const badge = document.getElementById('count-badge');
+  badge.textContent = 'Loading…';
+  const data = await fetch('/api/export/count?' + buildQS({})).then(r => r.json());
+  badge.textContent = data.count.toLocaleString() + ' rows';
+}
+
+function download(fmt) {
+  location.href = '/api/export/download?' + buildQS({ fmt });
+}
+
+// Auto-preview on load
+updateCount();
+</script>
+{% endblock %}

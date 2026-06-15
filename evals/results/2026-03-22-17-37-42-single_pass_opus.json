@@ -1,0 +1,26 @@
+{
+  "single_pass_opus": [],
+  "_config_snapshots": {
+    "single_pass_opus": {
+      "pipeline": "single_pass",
+      "pass1": {
+        "model": "claude-opus-4-6",
+        "max_tokens": 8192,
+        "temperature": 1,
+        "top_p": null,
+        "top_k": null,
+        "system_prompt": "You are a specialist financial transcript analyst. Extract every investment vehicle discussed as an investment \u2014 stocks, ETFs, crypto, and commodities. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER. Do NOT use spot/futures tickers like XAUUSD or GC=F. For commodities and crypto: company_name must be the literal string 'NULL'. Fix transcription errors. Return only valid JSON. Recommendation must be one of: buy / sell / hold / watch / reference. 'watch' = bullish interest but creator is explicitly waiting (for earnings, a dip, a catalyst). 'hold' = creator already owns it and is keeping it. 'reference' = passing mention, no investment intent.",
+        "user_prompt_template": "You are analyzing a finance YouTube video transcript. Language: {language}.\n{title_hint}\nIMPORTANT: Be THOROUGH. Find EVERY investment vehicle \u2014 stocks, ETFs, crypto, and commodities.\n\nRules:\n1. Extract ALL stocks, ETFs, crypto, or commodities mentioned as investments\n2. For commodities use ETF proxy tickers: gold=GLD, silver=SLV, oil=USO, natural gas=UNG, copper=CPER\n3. For commodities and crypto: company_name must be the literal string 'NULL'\n4. asset_type: 'stock' / 'etf' / 'crypto' / 'commodity'\n5. Fix transcription errors: 'in Vidia' = NVIDIA, 'A MD' = AMD\n6. Ambiguous sentiment = neutral + low confidence\n7. Recommendation: buy / sell / hold / watch / reference\n   'watch' = bullish but explicitly waiting (earnings, dip, catalyst)\n   'hold' = already owns it and keeping it\n   'reference' = passing mention, no investment intent\n8. Return ONLY valid JSON.\n\nTranscript:\n{transcript}\n\nRequired output format:\n{{\"mentions\": [{{\"ticker\": \"AAPL\", \"company_name\": \"Apple\", \"asset_type\": \"stock\", \"mention_count\": 3, \"sentiment\": \"bullish\", \"confidence\": 0.85, \"recommendation\": \"buy\", \"context\": \"...\"}}, {{\"ticker\": \"GLD\", \"company_name\": \"NULL\", \"asset_type\": \"commodity\", \"mention_count\": 2, \"sentiment\": \"bullish\", \"confidence\": 0.8, \"recommendation\": \"watch\", \"context\": \"Host likes gold but waiting for a pullback.\"}}]}}"
+      },
+      "pass1b": null,
+      "pass2": null,
+      "pass3": null
+    }
+  },
+  "_meta": {
+    "timestamp": "2026-03-22-17-37-42",
+    "versions": {
+      "single_pass_opus": 3
+    }
+  }
+}

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Stocks{% endblock %}
+{% block content %}
+
+<div style="margin-bottom:24px;">
+  <h1 style="font-size:22px;font-weight:600;color:var(--text);margin:0 0 4px;">All Stocks</h1>
+  <p style="color:var(--text-muted);font-size:13px;margin:0;">Every ticker mentioned across all tracked channels.</p>
+</div>
+
+<div class="card">
+  {% if stocks %}
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Ticker</th>
+        <th>Company</th>
+        <th>Mentions</th>
+        <th>Bullish</th>
+        <th>Bearish</th>
+        <th>Neutral</th>
+        <th>Channels</th>
+        <th>Sentiment</th>
+        <th></th>
+      </tr>
+      <tr style="background:var(--bg-raised);border-bottom:2px solid var(--border);font-size:12px;font-weight:600;color:var(--text-muted);">
+        <td colspan="2" style="padding:8px 12px;color:var(--text);">
+          {{ stocks|length }} tickers
+        </td>
+        <td style="padding:8px 12px;">{{ stocks|length }} companies</td>
+        <td style="padding:8px 12px;color:var(--text);">{{ stocks|sum(attribute='mention_count') }} mentions</td>
+        <td style="padding:8px 12px;color:var(--positive);">{{ stocks|sum(attribute='bullish_count') }} bullish</td>
+        <td style="padding:8px 12px;color:var(--negative);">{{ stocks|sum(attribute='bearish_count') }} bearish</td>
+        <td style="padding:8px 12px;color:var(--neutral);">{{ stocks|sum(attribute='neutral_count') }} neutral</td>
+        <td style="padding:8px 12px;">—</td>
+        <td colspan="2" style="padding:8px 12px;"></td>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in stocks %}
+      <tr>
+        <td style="color:var(--text-muted);">{{ loop.index }}</td>
+        <td><a href="/stock/{{ s.ticker }}" style="font-weight:600;color:var(--accent-hl);">{{ s.ticker }}</a></td>
+        <td style="color:var(--text-muted);">{{ s.company_name or '—' }}</td>
+        <td style="font-weight:500;">{{ s.mention_count }}</td>
+        <td style="color:var(--positive);">{{ s.bullish_count }}</td>
+        <td style="color:var(--negative);">{{ s.bearish_count }}</td>
+        <td style="color:var(--neutral);">{{ s.neutral_count }}</td>
+        <td>{{ s.channels_count }}</td>
+        <td>
+          {% set total = s.bullish_count + s.bearish_count + s.neutral_count %}
+          {% if total > 0 %}
+          <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;width:80px;">
+            <div style="width:{{ (s.bullish_count/total*100)|round }}%;background:var(--positive);"></div>
+            <div style="width:{{ (s.bearish_count/total*100)|round }}%;background:var(--negative);"></div>
+            <div style="width:{{ (s.neutral_count/total*100)|round }}%;background:var(--neutral);"></div>
+          </div>
+          {% endif %}
+        </td>
+        <td style="white-space:nowrap;">
+          <button onclick="toggleChart('{{ s.ticker }}', {{ loop.index }})"
+            id="chart-btn-{{ loop.index }}"
+            title="Show mention history"
+            style="background:none;border:none;cursor:pointer;padding:4px 6px;color:var(--text-muted);border-radius:4px;line-height:0;transition:color 0.15s;">
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="0,10 4,5 7,7 10,2 15,4"/>
+            </svg>
+          </button>
+        </td>
+      </tr>
+      <tr id="chart-row-{{ loop.index }}" style="display:none;">
+        <td colspan="10" style="padding:16px 20px;background:var(--bg-raised);border-bottom:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.07em;">
+              {{ s.ticker }} — Mention History
+            </span>
+            <div style="display:flex;gap:6px;">
+              <button id="cm-total-{{ loop.index }}" onclick="setChartMode('{{ s.ticker }}', {{ loop.index }}, 'total')"
+                style="padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;background:var(--accent);color:#fff;border:1px solid var(--accent);">Total</button>
+              <button id="cm-distinct-{{ loop.index }}" onclick="setChartMode('{{ s.ticker }}', {{ loop.index }}, 'distinct')"
+                style="padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;background:var(--bg-card);color:var(--text-muted);border:1px solid var(--border);">Distinct</button>
+              <button id="cm-sentiment-{{ loop.index }}" onclick="setChartMode('{{ s.ticker }}', {{ loop.index }}, 'sentiment')"
+                style="padding:3px 10px;border-radius:4px;font-size:11px;font-weight:600;cursor:pointer;background:var(--bg-card);color:var(--text-muted);border:1px solid var(--border);">By Sentiment</button>
+            </div>
+          </div>
+          <canvas id="mini-chart-{{ loop.index }}" style="max-height:160px;"></canvas>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% else %}
+  <p style="color:var(--text-muted);padding:20px 0;">No stocks tracked yet. Run a scan to get started.</p>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  const chartInstances = {};
+  const chartDataCache = {};
+  const chartModes = {};
+
+  const fmtDate = function(raw) {
+    if (!raw) return raw;
+    const d = new Date(raw + 'T00:00:00');
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const xAxis = {
+    ticks: {
+      color: '#6b80a8',
+      maxRotation: 75,
+      minRotation: 45,
+      autoSkip: false,
+      callback: function(value) { return fmtDate(this.getLabelForValue(value)); }
+    },
+    grid: { color: '#1e2d4a' }
+  };
+
+  function renderMiniChart(idx, data, mode) {
+    if (chartInstances[idx]) chartInstances[idx].destroy();
+    const canvas = document.getElementById('mini-chart-' + idx);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let datasets;
+    if (mode === 'total') {
+      datasets = [{ label: 'Total Mentions', data: data.total, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,0.1)', tension: 0.3, pointRadius: 3, fill: true }];
+    } else if (mode === 'distinct') {
+      datasets = [{ label: 'Distinct Videos', data: data.distinct, borderColor: '#a855f7', backgroundColor: 'rgba(168,85,247,0.1)', tension: 0.3, pointRadius: 3, fill: true }];
+    } else {
+      datasets = [
+        { label: 'Bullish', data: data.bullish, borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.08)', tension: 0.3, pointRadius: 3 },
+        { label: 'Bearish', data: data.bearish, borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)', tension: 0.3, pointRadius: 3 },
+        { label: 'Neutral', data: data.neutral, borderColor: '#eab308', backgroundColor: 'rgba(234,179,8,0.08)', tension: 0.3, pointRadius: 3 },
+      ];
+    }
+    chartInstances[idx] = new Chart(ctx, {
+      type: 'line',
+      data: { labels: data.labels, datasets },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#e8eeff', boxWidth: 10, font: { size: 11 } } } },
+        scales: {
+          x: xAxis,
+          y: { ticks: { color: '#6b80a8', stepSize: 1 }, grid: { color: '#1e2d4a' }, beginAtZero: true }
+        }
+      }
+    });
+  }
+
+  window.setChartMode = function(ticker, idx, mode) {
+    chartModes[idx] = mode;
+    ['cm-total-', 'cm-distinct-', 'cm-sentiment-'].forEach(function(prefix, i) {
+      const modeKey = ['total', 'distinct', 'sentiment'][i];
+      const el = document.getElementById(prefix + idx);
+      const active = modeKey === mode;
+      el.style.background = active ? 'var(--accent)' : 'var(--bg-card)';
+      el.style.color = active ? '#fff' : 'var(--text-muted)';
+      el.style.borderColor = active ? 'var(--accent)' : 'var(--border)';
+    });
+    if (chartDataCache[idx]) renderMiniChart(idx, chartDataCache[idx], mode);
+  };
+
+  window.toggleChart = function(ticker, idx) {
+    const row = document.getElementById('chart-row-' + idx);
+    const btn = document.getElementById('chart-btn-' + idx);
+    const isOpen = row.style.display !== 'none';
+    row.style.display = isOpen ? 'none' : 'table-row';
+    btn.style.color = isOpen ? 'var(--text-muted)' : 'var(--accent-hl)';
+    if (!isOpen) {
+      if (!chartDataCache[idx]) {
+        fetch('/api/stock/' + ticker + '/chart-data?days=0')
+          .then(r => r.json())
+          .then(data => {
+            chartDataCache[idx] = data;
+            renderMiniChart(idx, data, chartModes[idx] || 'total');
+          });
+      } else {
+        renderMiniChart(idx, chartDataCache[idx], chartModes[idx] || 'total');
+      }
+    }
+  };
+})();
+</script>
+
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Vetted — Home{% endblock %}
+{% block content %}
+
+<div class="page-header">
+  <h1>Home</h1>
+  <p>Activity since your last visit{% if prev_visit %} on {{ prev_visit.strftime('%b %d, %H:%M') }}{% endif %}.</p>
+</div>
+
+{% if delta %}
+<div class="kpi-grid" style="margin-bottom:28px;">
+  <div class="kpi-card">
+    <div class="kpi-value">{{ db_health.total_mentions or 0 }}</div>
+    <div class="kpi-label">Total mentions</div>
+    {% if delta.new_mentions %}<div class="kpi-delta">+{{ delta.new_mentions }} since last visit</div>{% endif %}
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ db_health.distinct_tickers or 0 }}</div>
+    <div class="kpi-label">Distinct tickers</div>
+    {% if delta.new_tickers %}<div class="kpi-delta">+{{ delta.new_tickers }} since last visit</div>{% endif %}
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ db_health.total_videos or 0 }}</div>
+    <div class="kpi-label">Videos scanned</div>
+    {% if delta.new_videos %}<div class="kpi-delta">+{{ delta.new_videos }} since last visit</div>{% endif %}
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-value">{{ db_health.total_channels or 0 }}</div>
+    <div class="kpi-label">Channels tracked</div>
+  </div>
+</div>
+{% endif %}
+
+<div class="search-wrap" style="max-width:520px;">
+  <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <input type="text" id="search" class="form-input search-input" placeholder="Search ticker or channel…" autocomplete="off">
+  <div id="search-results" class="search-results"></div>
+</div>
+
+<div class="two-col">
+  <div class="card">
+    <div class="section-header">
+      <h2>Most covered stocks</h2>
+      <a href="/stocks" style="font-size:12px;color:var(--muted);">All stocks →</a>
+    </div>
+    {% for s in top_stocks[:10] %}
+    <a href="/stocks/{{ s.ticker }}" class="ticker-chip" style="margin:0 4px 6px 0;">
+      {{ s.ticker }}
+      <span style="font-weight:400;color:var(--muted);">{{ s.mention_count }}</span>
+      <span class="badge badge-{{ 'bull' if s.dominant == 'bullish' else ('bear' if s.dominant == 'bearish' else 'neut') }}" style="padding:1px 5px;font-size:10px;">{{ s.dominant[:4] }}</span>
+    </a>
+    {% else %}
+    <p>No data yet.</p>
+    {% endfor %}
+  </div>
+
+  <div class="card">
+    <div class="section-header">
+      <h2>Recent activity</h2>
+    </div>
+    {% for v in activity[:15] %}
+    <div class="feed-item">
+      <span class="feed-date">{{ v.upload_date }}</span>
+      <span class="feed-title">
+        <a href="https://youtube.com/watch?v={{ v.video_id }}" target="_blank" rel="noopener" style="color:var(--text);">{{ v.title }}</a>
+      </span>
+      <span class="feed-channel">{{ v.channel_name }}</span>
+      {% if v.stock_count %}<span class="feed-badge">{{ v.stock_count }} stocks</span>{% endif %}
+    </div>
+    {% else %}
+    <p>No videos yet.</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const inp = document.getElementById('search');
+const res = document.getElementById('search-results');
+let _t;
+inp.addEventListener('input', () => {
+  clearTimeout(_t);
+  _t = setTimeout(async () => {
+    const q = inp.value.trim();
+    if (q.length < 2) { res.style.display = 'none'; return; }
+    const data = await fetch(`/api/search?q_param=${encodeURIComponent(q)}`).then(r => r.json());
+    if (!data.results.length) { res.style.display = 'none'; return; }
+    res.innerHTML = data.results.map(r =>
+      `<div class="search-result" onclick="location.href='/${r.type === 'ticker' ? 'stocks' : 'channels'}/${r.id}'">
+        ${r.label}<span class="type-pill">${r.type}</span>
+      </div>`
+    ).join('');
+    res.style.display = 'block';
+  }, 220);
+});
+document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) res.style.display = 'none'; });
+</script>
+{% endblock %}
