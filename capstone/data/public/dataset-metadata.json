@@ -1,0 +1,8 @@
+{
+  "title": "Vetted: Finance-YouTube Stock Calls 2024-2026",
+  "id": "mitjaw/vetted-finance-youtube-stock-calls",
+  "subtitle": "5,461 buy and bearish stock calls from 12 finance-YouTube channels",
+  "licenses": [{"name": "CC-BY-NC-SA-4.0"}],
+  "keywords": ["finance", "investing", "youtube", "nlp", "stocks"],
+  "resources": [{"path": "vetted_calls.csv", "description": "One row per stock call: channel, video, date, ticker, direction, LLM label, flags"}]
+}

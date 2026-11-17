@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Do finance YouTubers' stock picks beat the market? · Vetted case study</title>
+<meta name="description" content="A data analysis of stock calls from 12 finance-YouTube channels, compared with the S&P 500. Google Data Analytics capstone.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%231b1b1b'/%3E%3Cpath d='M7 21l6-7 4 4 8-10' stroke='%23fff' stroke-width='2.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>/*__CSS__*/</style>
+</head>
+<body>
+
+<header class="bar" id="bar">
+  <div class="wrap">
+    <a class="brand" href="#top">Vetted case study</a>
+    <nav class="steps" aria-label="Sections">
+      <a href="#ask">Ask</a><a href="#prepare">Prepare</a><a href="#process">Process</a><a href="#analyze">Analyze</a><a href="#share">Share</a><a href="#act">Act</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ================= TOP ================= -->
+<section class="hero" id="top">
+  <div class="wrap hero-copy">
+    <p class="kicker">Google Data Analytics capstone, November 2026</p>
+    <h1>Do finance YouTubers’ stock picks beat the market?</h1>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <p class="answer"><b>Mostly no.</b> Fewer than half of their buy recommendations beat the S&amp;P&nbsp;500, and buying right after a video worked no better than buying the same stocks on any other day.</p>
+        <p class="lede">Vetted reads the transcripts of finance&#8209;YouTube videos and logs every stock a creator recommends or warns about. On this page I check those calls against simply holding the S&amp;P&nbsp;500.</p>
+        <p class="facts">After cleaning, the dataset has <b data-v="dataset.calls" data-f="int"></b> calls from <b data-v="dataset.videos" data-f="int"></b> videos on <b data-v="dataset.channels"></b> channels, March 2024 to March 2026.</p>
+        <p class="hero-actions"><a href="#analyze">Go to the findings</a></p>
+      </div>
+      <figure class="hero-fig">
+        <div id="heroChart"></div>
+        <figcaption id="heroCap"></figcaption>
+      </figure>
+    </div>
+
+    <nav class="rail" id="rail" aria-label="The six steps of the case study">
+      <p class="rail-head">The case study in six steps</p>
+      <div class="rail-track" id="railTrack">
+        <a href="#ask" data-i="0">Ask</a>
+        <a href="#prepare" data-i="1">Prepare</a>
+        <a href="#process" data-i="2">Process</a>
+        <a href="#analyze" data-i="3">Analyze</a>
+        <a href="#share" data-i="4">Share</a>
+        <a href="#act" data-i="5">Act</a>
+      </div>
+      <p class="rail-text" id="railText"></p>
+    </nav>
+  </div>
+</section>
+
+<main>
+<!-- ================= ASK ================= -->
+<section class="phase" id="ask">
+  <div class="wrap">
+    <p class="step">Step 1 of 6 · Ask</p>
+    <h2>What I wanted to know</h2>
+    <p>Finance YouTube is full of stock recommendations. Vetted started as a way to rank creators by how well their calls turn out. Before building more of it, I wanted to know whether the calls say anything about what a stock does next.</p>
+    <p>The answer matters to two groups: people who watch these channels and wonder whether to act on a recommendation, and people who build rankings of creators or analysts, which is what Vetted set out to do.</p>
+    <h3>Three questions</h3>
+    <ol class="qlist">
+      <li>Do buy recommendations beat the S&amp;P&nbsp;500 over one to twelve months?</li>
+      <li>Does the call itself help (when it was made, and whether it was a buy or a warning), or do these channels just like stocks that happened to do well?</li>
+      <li>Are some channels better than others, beyond what luck would produce?</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= PREPARE ================= -->
+<section class="phase" id="prepare">
+  <div class="wrap">
+    <p class="step">Step 2 of 6 · Prepare</p>
+    <h2>Where the data comes from</h2>
+    <p>I collected the data myself. My pipeline downloads the transcript of every new video from a fixed list of channels. A small language model (Claude Haiku) reads each transcript, lists the stocks that come up and notes for each one whether the creator is positive or negative about it. The results go into a database. Share prices come from Yahoo Finance.</p>
+
+    <figure class="shot">
+      <img src="img/vetted-dashboard.png" alt="Screenshot of the Vetted dashboard: a table of the most-mentioned stocks with the number of channels, videos, share of bullish mentions and average returns." loading="lazy" width="1400" height="900">
+      <figcaption>The data shown in the dashboard is raw, before any cleaning.</figcaption>
+    </figure>
+
+    <h3>What one row looks like</h3>
+    <p>Each row is one stock in one video. These are real rows from the cleaned dataset.</p>
+    <div class="tablewrap"><table class="t" id="sampleRows"></table></div>
+
+    <details class="solo"><summary>The standard five-point check of the data (ROCCC)</summary><div class="inner">
+    <div class="tablewrap"><table class="t roccc">
+      <tbody>
+        <tr><th>Reliable</th><td>Partly</td><td>The labels are written by a language model. The check below shows how often they are right.</td></tr>
+        <tr><th>Original</th><td>Yes</td><td>Collected by my own pipeline from public videos.</td></tr>
+        <tr><th>Comprehensive</th><td>Partly</td><td><span data-v="dataset.channels"></span> channels that I picked. Mostly English, mostly focused on growth and tech stocks. The period was a rising market.</td></tr>
+        <tr><th>Current</th><td>Yes</td><td>Videos up to March 2026, prices up to 13 November 2026.</td></tr>
+        <tr><th>Cited</th><td>Yes</td><td>Every row has the ID of the public YouTube video it comes from.</td></tr>
+      </tbody>
+    </table></div>
+    </div></details>
+
+    <h3>How often does the model get it right?</h3>
+    <p>To find out, <span data-v="audit.ticker_correct.n"></span> randomly chosen rows were read again next to the transcript. The question each time: is the creator really taking a position on this stock?</p>
+    <div class="fig" id="auditFig">
+      <p class="fig-title">Rows labelled “buy” (<span data-v="audit.buy_genuine.n"></span> checked)</p>
+      <div class="stack" id="stackBuy"></div>
+      <p class="fig-title" style="margin-top:22px">Rows labelled “avoid” or “sell” (<span data-v="audit.bearish_genuine.n"></span> checked)</p>
+      <div class="stack" id="stackBear"></div>
+      <p class="keyline"><span><i class="k k1"></i>clear recommendation</span> <span><i class="k k2"></i>clear opinion, no explicit advice</span> <span><i class="k k3"></i>someone else’s pick, passed on</span> <span><i class="k k4"></i>no opinion (an example, a news item, a comparison)</span></p>
+    </div>
+    <p><b><span data-v="audit.buy_genuine.share" data-f="pct0"></span> of the “buy” labels were a real positive opinion</b>, and <span data-v="audit.bearish_genuine.share" data-f="pct0"></span> of the “avoid/sell” labels a real negative one. The model often mistakes a passing mention for advice, for example when a creator names Nvidia as a stock that made people rich in the past. When a stock is named four or more times in a video the label is almost always right (<span data-v="audit.buy_in_depth_genuine.k"></span> of <span data-v="audit.buy_in_depth_genuine.n"></span>).</p>
+    <p>So on this page a “buy call” means: the creator spoke positively about the stock. That is true for about seven rows in ten. The negative labels are too unreliable to build a conclusion on.</p>
+    <details><summary>How the check was done</summary><div class="inner">
+      <p>The sample was drawn at random with a fixed seed: <span data-v="audit.buy_genuine.n"></span> rows labelled as buy and <span data-v="audit.bearish_genuine.n"></span> labelled as avoid or sell. Each one was compared with the passage of the transcript where the stock comes up and sorted into the four groups in the chart. I did this with Claude Code, a stronger model than the one in the pipeline, using a stricter definition of “recommendation”. Nobody labelled the sample a second time, so I cannot say how much two readers would disagree. The labels are published with the analysis code so anyone can check them row by row. The 95% range for the <span data-v="audit.buy_genuine.share" data-f="pct0"></span> is <span data-v="audit.buy_genuine.lo" data-f="pct0"></span> to <span data-v="audit.buy_genuine.hi" data-f="pct0"></span>; for the <span data-v="audit.bearish_genuine.share" data-f="pct0"></span> it is <span data-v="audit.bearish_genuine.lo" data-f="pct0"></span> to <span data-v="audit.bearish_genuine.hi" data-f="pct0"></span>.</p>
+      <p>The pipeline has its own small test set, and it shows the same weakness. Over <span data-v="benchmark.runs"></span> test runs on <span data-v="benchmark.videos"></span> videos that I had labelled by hand, the model found <span data-v="benchmark.recall" data-f="pct0"></span> of the stocks it should have found and gave <span data-v="benchmark.label_acc" data-f="pct0"></span> of them the right label. Results also varied a lot from one run to the next.</p>
+      <p>The “named four or more times” rule was found by looking at this same sample, so <span data-v="audit.buy_in_depth_genuine.k"></span> of <span data-v="audit.buy_in_depth_genuine.n"></span> is probably a little optimistic.</p>
+    </div></details>
+  </div>
+</section>
+
+<!-- ================= PROCESS ================= -->
+<section class="phase" id="process">
+  <div class="wrap">
+    <p class="step">Step 3 of 6 · Process</p>
+    <h2>Cleaning: from <span data-v="cleaning.raw.mentions" data-f="int"></span> mentions to <span data-v="dataset.calls" data-f="int"></span> calls</h2>
+    <p>Most of what the model extracts is a stock being mentioned in passing. Each step below removes rows that cannot answer the question. Tap a row to see why.</p>
+    <div class="fig">
+      <div class="funnel" id="funnel"></div>
+      <p class="fwhy" id="fwhy" aria-live="polite"></p>
+    </div>
+    <h3>Four decisions that matter</h3>
+    <details><summary>Returns are counted from the day after the video</summary><div class="inner"><p>The data has the date of a video but not the time. If I used the closing price of the same day, a video published in the evening would get credit for a price move that had already happened. So the starting price is the first closing price after the video date. From there I measure 30, 90, 180 and 365 days, and I measure the S&amp;P&nbsp;500 (through the SPY fund) over exactly the same days.</p></div></details>
+    <details><summary>Companies that went bankrupt or were bought stay in</summary><div class="inner"><p>Yahoo Finance removes companies once they stop trading. Leaving them out would quietly delete some of the worst calls. I mapped renamed companies to their new ticker and got prices for delisted ones from a second source. <span data-v="cleaning.clean.calls_on_delisted"></span> calls on <span data-v="cleaning.clean.delisted_tickers"></span> such companies are in the data, valued at their last traded price. Some rarely mentioned tickers could not be found in either source and are missing.</p></div></details>
+    <details><summary>Repeated calls stay in and are marked</summary><div class="inner"><p>Channels keep coming back to their favourite stocks. <span data-v="dataset.repeat_share" data-f="pct0"></span> of the buy calls repeat a call the same channel made on the same stock in the 90 days before. A viewer sees every one of them, so they stay in. Every result is also shown with each idea counted only once.</p></div></details>
+    <details><summary>What is in the public dataset</summary><div class="inner"><p>One row per call: channel, video ID, date, ticker, direction, the model’s original label, its confidence, how often the stock was named, and two yes/no columns for “named four or more times” and “repeat of an earlier call”. It contains no transcript text and no prices. The notebook downloads prices itself.</p></div></details>
+  </div>
+</section>
+
+<!-- ================= ANALYZE ================= -->
+<section class="phase" id="analyze">
+  <div class="wrap">
+    <p class="step">Step 4 of 6 · Analyze</p>
+    <h2>What the data shows</h2>
+    <p>All results compare a stock with the S&amp;P&nbsp;500 over the same days. “+2&nbsp;pp” means the stock did two percentage points better than the index, “−2&nbsp;pp” two points worse.</p>
+    <ol class="glance" aria-label="The four findings">
+      <li><a href="#f1">More than half of the buy calls did worse than the S&amp;P&nbsp;500.</a></li>
+      <li><a href="#f2">On average the calls were ahead, thanks to a few stocks that were recommended over and over.</a></li>
+      <li><a href="#f3">It made no difference when a call was made, or whether it was a recommendation or a warning.</a></li>
+      <li><a href="#f4">No channel was clearly better than the others.</a></li>
+    </ol>
+  </div>
+
+  <article class="finding" id="f1"><div class="wrap">
+    <p class="fno">Finding 1 of 4</p>
+    <h3>More than half of the buy calls did worse than the S&amp;P&nbsp;500.</h3>
+    <p class="sub">Ninety days after a video, <span data-v="headline.90.spy.hit" data-f="pct0"></span> of the recommended stocks had beaten the index. The one in the middle was <span data-v="headline.90.spy.median" data-f="rel"></span>. After 30, 180 and 365 days the picture is the same.</p>
+    <div class="fig" id="figDist">
+      <div class="fig-top">
+        <p class="fig-title">How each buy call did against the S&amp;P&nbsp;500<small>Number of calls by result, <span id="distN"></span> calls. Grey: worse than the index. Blue: better.</small></p>
+        <div class="tabs" data-seg="dist" role="group" aria-label="Days after the video"></div>
+      </div>
+      <div class="chart" data-chart="dist"></div>
+      <p class="readout"><span><b id="dHit"></b> beat the index</span><span>middle call <b id="dMed"></b></span><span>average <b id="dMean"></b></span></p>
+    </div>
+    <details class="how"><summary>How to read this chart</summary><div class="inner"><p>Each bar counts the calls whose result fell into a range of five points. Bars left of zero are calls that did worse than the S&amp;P&nbsp;500, bars to the right did better. The dotted line marks the middle call (the median): half of all calls are to its left. The solid line is the average. The average sits further right than the median because a small number of calls gained 50 points or more. The buttons switch between 30, 90, 180 and 365 days after the video.</p></div></details>
+    <p class="sure"><b>How sure is this?</b> As a description of these calls it is exact, and it holds for all four time spans. As a statement about such calls in general it is less firm: the share that beats the index could plausibly be anywhere from <span data-v="headline.90.spy.hit_lo" data-f="pct0"></span> to <span data-v="headline.90.spy.hit_hi" data-f="pct0"></span>. So the data rule out that clearly more than half of the calls win. They do not rule out an even split. The pattern itself is normal for single stocks: most trail the index, and a few big winners pull the average up.</p>
+    <details><summary>The numbers behind it</summary><div class="inner"><p>Share of calls beating the index after 90 days: <span data-v="headline.90.spy.hit" data-f="pct"></span> (95% range <span data-v="headline.90.spy.hit_lo" data-f="pct"></span> to <span data-v="headline.90.spy.hit_hi" data-f="pct"></span>). Median result after 30 / 90 / 180 / 365 days: <span data-v="headline.30.spy.median" data-f="pp"></span>, <span data-v="headline.90.spy.median" data-f="pp"></span>, <span data-v="headline.180.spy.median" data-f="pp"></span>, <span data-v="headline.365.spy.median" data-f="pp"></span>. The 365-day figures use the <span data-v="headline.365.spy.n" data-f="int"></span> calls that are old enough to have a full year of prices.</p></div></details>
+  </div></article>
+
+  <article class="finding" id="f2"><div class="wrap">
+    <p class="fno">Finding 2 of 4</p>
+    <h3>On average the calls were ahead, thanks to a few stocks that were recommended over and over.</h3>
+    <p class="sub">Six months after a video the average buy call was <span data-v="headline.180.spy.mean" data-f="abs1"></span> percentage points ahead of the S&amp;P&nbsp;500. <span id="top3share"></span> of that lead comes from three stocks (<span id="top3"></span>). These channels also prefer tech stocks that move more than the market, and the two years covered here were good years for exactly those stocks.</p>
+    <div class="fig" id="figLens">
+      <div class="fig-top">
+        <p class="fig-title">The average result of a buy call, calculated in different ways<small>Dot: result in percentage points. Line: how uncertain it is (95% confidence interval).</small></p>
+        <div class="tabs" data-seg="lens" role="group" aria-label="Days after the video"></div>
+      </div>
+      <div class="chart" data-chart="lens"></div>
+    </div>
+    <details class="how"><summary>How to read this chart</summary><div class="inner"><p>Every row repeats the same calculation with one thing changed, for example leaving out the three most successful stocks. The dot is the result. The line around it shows how uncertain that result is (a 95% confidence interval). If the line crosses zero, the data also fit with no advantage at all. A filled dot means the line does not cross zero.</p></div></details>
+    <p class="sure"><b>How sure is this?</b> Fairly sure that the average is carried by a few stocks. Much less sure that there is a real advantage at all: of the four time spans I looked at, only the 180-day result for all calls is clearly above zero, and in most of the stricter versions the line crosses zero.</p>
+    <details><summary>What each row means, and how the ranges are calculated</summary><div class="inner">
+      <ul>
+        <li><b>All buy calls:</b> every call counts once, compared with the S&amp;P&nbsp;500.</li>
+        <li><b>Compared with the Nasdaq-100:</b> the same calls against an index full of tech stocks, which is a fairer comparison for tech-heavy picks.</li>
+        <li><b>Adjusted for risk:</b> a stock that swings twice as much as the market should also gain twice as much when the market rises. This row subtracts that expected gain. The typical recommended stock moves <span data-v="beta.median"></span> times as much as the market (its “beta”, measured over the 250 trading days before the call).</li>
+        <li><b>Without the three best stocks:</b> leaves out the three tickers that added most to the total.</li>
+        <li><b>Each idea counted once:</b> drops a call if the same channel made the same call on the same stock in the previous 90 days.</li>
+        <li><b>Only stocks discussed at length:</b> calls where the stock is named four or more times. These have the most reliable labels.</li>
+        <li><b>Every month / every channel counts equally:</b> averages the monthly or channel averages, so one busy month or one large channel cannot dominate.</li>
+      </ul>
+      <p>For all buy calls the 95% intervals are <span data-v="headline.30.spy.lo" data-f="pp"></span> to <span data-v="headline.30.spy.hi" data-f="pp"></span> after 30 days, <span data-v="headline.90.spy.lo" data-f="pp"></span> to <span data-v="headline.90.spy.hi" data-f="pp"></span> after 90, <span data-v="headline.180.spy.lo" data-f="pp"></span> to <span data-v="headline.180.spy.hi" data-f="pp"></span> after 180 and <span data-v="headline.365.spy.lo" data-f="pp"></span> to <span data-v="headline.365.spy.hi" data-f="pp"></span> after 365. I did not correct these for looking at four time spans.</p>
+      <p>The calls are not independent of each other. A hundred calls on the same stock share one outcome, and all calls made in the same month share one market. The ranges account for both (standard errors clustered by ticker and by month). Treating the <span data-v="dataset.buy" data-f="int"></span> calls as independent would make the 90-day range <span data-v="se_variants.90.twoway" data-f="x-iid90"></span> too narrow, and the 365-day range <span data-v="se_variants.365.twoway" data-f="x-iid365"></span> too narrow.</p>
+    </div></details>
+  </div></article>
+
+  <article class="finding" id="f3"><div class="wrap">
+    <p class="fno">Finding 3 of 4</p>
+    <h3>It made no difference when a call was made, or whether it was a recommendation or a warning.</h3>
+    <p class="sub">If the calls contained information, stocks should do better after a recommendation than after a warning. They should also do better from the day of the video than from some other day. I found neither.</p>
+    <div class="fig" id="figPath">
+      <p class="fig-title">Recommended stocks and stocks the creators warned about, in the year after the video<small>Average result against the S&amp;P&nbsp;500 in percentage points. Shaded: how uncertain each line is (95% confidence interval).</small></p>
+      <div class="chart" data-chart="path"></div>
+    </div>
+    <details class="how"><summary>How to read this chart</summary><div class="inner"><p>The blue line follows the average recommended stock from the day after the video, the grey line the average stock a creator warned about. Both are measured against the S&amp;P&nbsp;500, so a line at +10 means ten points better than the index. If warnings were useful, the grey line would run clearly below the blue one. The two shaded bands overlap almost completely, which means the difference between the lines could be chance. Touch or hover the chart to read the values for a single day.</p></div></details>
+    <div class="fig" id="figPlacebo">
+      <p class="fig-title">What if the same calls had been made on other days?<small>Each grey bar counts alternative calendars by their average 90-day result. Blue line: the real dates.</small></p>
+      <div class="chart" data-chart="placebo"></div>
+      <p class="figtext" id="placeboNote"></p>
+    </div>
+    <details class="how"><summary>How to read this chart</summary><div class="inner"><p>I moved every call by the same number of days, for example all of them 40 trading days later, and calculated the average result again. I repeated that for <span data-v="placebo.90.n_shifts"></span> different shifts. The grey bars show how those alternative calendars turned out. If the timing of the videos were good, the blue line (the real dates) would be at the far right. It is on the left: most other calendars would have done better.</p></div></details>
+    <p class="sure"><b>How sure is this?</b> Fairly sure about the timing. Less sure about recommendations versus warnings, because the warning label is right only about <span data-v="audit.bearish_genuine.share" data-f="pct0"></span> of the time. That much noise would hide a small real difference.</p>
+    <details><summary>The numbers behind it</summary><div class="inner"><p>Recommended minus warned-about stocks after 90 days: <span data-v="direction.90.diff.mean" data-f="pp"></span> (95% range <span data-v="direction.90.diff.lo" data-f="pp"></span> to <span data-v="direction.90.diff.hi" data-f="pp"></span>). The real video dates rank at the <span data-v="placebo.90.percentile" data-f="ord"></span> percentile of the shifted calendars for 90 days, the <span data-v="placebo.30.percentile" data-f="ord"></span> for 30 days and the <span data-v="placebo.180.percentile" data-f="ord"></span> for 180 days. The year-long chart uses only calls that are old enough to have a full year of prices.</p></div></details>
+  </div></article>
+
+  <article class="finding" id="f4"><div class="wrap">
+    <p class="fno">Finding 4 of 4</p>
+    <h3>No channel was clearly better than the others.</h3>
+    <p class="sub" id="chSub"></p>
+    <div class="fig" id="figCh">
+      <div class="fig-top">
+        <p class="fig-title">Average result of a channel’s buy calls after 90 days<small>Channels with at least <span data-v="meta.min_channel_calls"></span> buy calls. Dot: result. Line: how uncertain it is (95% confidence interval).</small></p>
+        <div class="tabs" data-seg="ch" role="group" aria-label="Comparison"></div>
+      </div>
+      <div class="chart" data-chart="ch"></div>
+    </div>
+    <details class="how"><summary>How to read this chart</summary><div class="inner"><p>One row per channel. The dot is the average result of its buy calls against the S&amp;P&nbsp;500, 90 days after the video. The line shows the uncertainty. For most channels it crosses zero, which means the channel cannot be told apart from the index. “Adjusted for risk” subtracts the gain you would expect from stocks that simply move more than the market. Tap a row for details.</p></div></details>
+    <p class="sure"><b>How sure is this?</b> Not very, in either direction. Ten channels and two years are too little to rank anyone. The data cannot show that a channel has skill, and it cannot show that none has.</p>
+    <details><summary>The numbers behind it</summary><div class="inner"><p id="chDetail"></p></div></details>
+  </div></article>
+
+  <div class="wrap limits" id="limits">
+    <h3>What this analysis cannot tell you</h3>
+    <ul>
+      <li><b>How the calls do in a falling market.</b> March 2024 to November 2026 was a strong period led by tech stocks.</li>
+      <li><b>Anything precise.</b> About three in ten “buy” rows are not real recommendations, which blurs every comparison. The calls on stocks discussed at length, where the labels are nearly always right, show the same picture with wider ranges.</li>
+      <li><b>What finance YouTube as a whole is like.</b> These are <span data-v="dataset.channels"></span> channels I chose, and a few of them supply most of the rows.</li>
+      <li><b>Whether the model’s hindsight plays a role.</b> The language model that read a 2024 transcript was trained later and may know how those stocks did. I could not separate that from the ups and downs of the market.</li>
+      <li><b>What you would have earned.</b> Every call counts as one equal position, bought at the next closing price and held. Fees, taxes and what the creators did with their own money are not in the data.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= SHARE ================= -->
+<section class="phase" id="share">
+  <div class="wrap">
+    <p class="step">Step 5 of 6 · Share</p>
+    <h2>Files and code</h2>
+    <p>Everything needed to check this work. The numbers on this page are written by the analysis script into one file and read from there, so the page and the code cannot disagree.</p>
+    <ul class="links">
+      <li><a href="files/vetted_calls.csv" download>Dataset</a><span>vetted_calls.csv, <span data-v="dataset.calls" data-f="int"></span> rows, 13 columns. <a href="files/DATASET.html">Column descriptions</a></span></li>
+      <li><a href="files/vetted_capstone.html">Notebook</a><span>Recalculates the main results from the dataset with prices from Yahoo Finance. <a href="files/vetted_capstone.ipynb" download>Download .ipynb</a></span></li>
+      <li><a href="files/JOURNAL.html">Data journal</a><span>Every decision, the reason for it, and what I tried and dropped.</span></li>
+      <li><a href="https://github.com/Mitjaw/vetted-public/tree/main/capstone" rel="noopener">Code on GitHub</a><span>The Python scripts for cleaning, statistics and this page, plus the labels from the manual check. The same repository holds the <a href="https://github.com/Mitjaw/vetted-public" rel="noopener">Vetted pipeline</a> that collects the videos.</span></li>
+    </ul>
+    <details><summary>How AI was used</summary><div class="inner"><p>Claude Haiku does the extraction inside the Vetted pipeline. I wrote the cleaning and analysis code and this page together with Claude Code. Claude Code also did the re-reading of the 140 sampled rows; those labels are published with the analysis code and can be checked one by one.</p></div></details>
+  </div>
+</section>
+
+<!-- ================= ACT ================= -->
+<section class="phase" id="act">
+  <div class="wrap">
+    <p class="step">Step 6 of 6 · Act</p>
+    <h2>What to take from this</h2>
+    <div class="rec"><h3>If you watch finance YouTube</h3><p>Treat a recommendation as an idea to look into, and take your time. The days right after a video were no better a time to buy than any other. Most recommended stocks ended behind a plain index fund (<span data-v="headline.90.spy.hit" data-f="pct0"></span> beat the S&amp;P&nbsp;500 after 90 days).</p></div>
+    <div class="rec"><h3>If you rank creators, analysts or anyone else who makes predictions</h3><p>Compare with the index. Counting how often a stock went up says little in a rising market: the S&amp;P&nbsp;500 itself gained <span data-v="headline.90.spy.bench" data-f="abs1"></span>% in the average 90 days of this data. Count each idea once, because <span data-v="dataset.repeat_share" data-f="pct0"></span> of the buy calls here were repeats. Show how uncertain each number is, and leave out anyone with only a few dozen calls.</p></div>
+    <div class="rec"><h3>If you pull data out of text with a language model</h3><p>Read a sample yourself before you trust the output. Here about three in ten “buy” labels were not recommendations at all, and I only know that because <span data-v="audit.ticker_correct.n"></span> rows were checked by hand. For Vetted that means fixing the labels comes before any new feature.</p></div>
+  </div>
+</section>
+
+<section class="conclusion" id="conclusion">
+  <div class="wrap">
+    <p class="step">Conclusion</p>
+    <h2>Finance-YouTube stock calls told me very little about what a stock would do next.</h2>
+    <p>Across <span data-v="dataset.buy" data-f="int"></span> buy calls from <span data-v="dataset.channels"></span> channels, the middle call was <span data-v="headline.90.spy.median" data-f="rel"></span> after 90 days, and only <span data-v="headline.90.spy.hit" data-f="pct0"></span> of the calls beat the S&amp;P&nbsp;500. The average call was ahead, by <span data-v="headline.90.spy.mean" data-f="abs1"></span> percentage points after 90 days and <span data-v="headline.180.spy.mean" data-f="abs1"></span> after 180. That average rests on a few stocks that were recommended again and again. With each idea counted once, it can no longer be told apart from zero.</p>
+    <p>It did not matter when a call was made. Stocks the creators warned about did about as well as the ones they recommended. No channel was clearly better than the others.</p>
+    <p>Two things limit how far this goes. The data covers one rising market, and the labels are right about seven times in ten. A small advantage could be hidden by that noise, but a large one would be visible in these numbers.</p>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">
+  <p>Made by Mitja Wilms as the capstone project for the Google Data Analytics Certificate.</p>
+  <p>This is an analysis of public videos for learning purposes. It is not investment advice.</p>
+</div></footer>
+<div class="tip" id="tip" role="status"></div>
+
+<script>const DATA = /*__DATA__*/;</script>
+<script>/*__JS__*/</script>
+</body>
+</html>

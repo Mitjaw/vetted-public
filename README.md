@@ -4,6 +4,10 @@ Vetted scans finance YouTube, pulls out every stock that gets mentioned, and tra
 
 > **Status:** working prototype. About 2,500 videos processed across 26 months of content. The owner dashboard and a read-only consumer app are built. Not launched yet. See [Status & limitations](#status--limitations).
 
+## Case study: do the picks beat the market?
+
+I used the data from this pipeline for my Google Data Analytics capstone. Short answer: mostly no. Fewer than half of the buy recommendations beat the S&P 500. The cleaned dataset, the analysis code, a notebook and the data journal are in [`capstone/`](capstone/).
+
 ## What it does
 
 - Pulls full transcripts from finance YouTube channels via [TranscriptAPI](https://transcriptapi.com). No scraping, no quota burned on transcripts.

@@ -1,0 +1,117 @@
+{
+ "raw": {
+  "mentions": 13530,
+  "videos_with_mentions": 1951,
+  "channels": 22
+ },
+ "clean": {
+  "calls": 5461,
+  "buy": 4110,
+  "bearish": 1351,
+  "videos": 1295,
+  "channels": 12,
+  "tickers": 763,
+  "first_video": "2024-03-01",
+  "last_video": "2026-03-28",
+  "prices_through": "2026-11-13",
+  "in_depth_buy": 1444,
+  "delisted_tickers": 29,
+  "calls_on_delisted": 70,
+  "by_horizon": {
+   "30": 5461,
+   "90": 5461,
+   "180": 5461,
+   "365": 4201
+  }
+ },
+ "no_price_examples": {
+  "CSU": 6,
+  "AET": 5,
+  "NVIDIA": 5,
+  "LVMH": 4,
+  "SOUU": 4,
+  "SOOU": 4,
+  "ENP": 3,
+  "PNN": 3,
+  "VW": 2,
+  "KUAISHOU": 2,
+  "FORTNET": 2,
+  "POD": 2,
+  "VAR": 2,
+  "ABGO": 2,
+  "SNHM": 2
+ },
+ "steps": [
+  {
+   "step": "directional label",
+   "before": 13530,
+   "removed": 6251,
+   "after": 7279,
+   "why": "reference / hold / watch / conditional labels are not calls a viewer can act on"
+  },
+  {
+   "step": "label agrees with sentiment",
+   "before": 7279,
+   "removed": 75,
+   "after": 7204,
+   "why": "e.g. 'buy' with bearish/neutral sentiment: the two LLM fields contradict each other"
+  },
+  {
+   "step": "single stocks",
+   "before": 7204,
+   "removed": 1209,
+   "after": 5995,
+   "why": "ETFs, funds, crypto, commodities and indices are not stock picks (an S&P 500 ETF has zero excess return over SPY by construction)"
+  },
+  {
+   "step": "US listing",
+   "before": 5995,
+   "removed": 98,
+   "after": 5897,
+   "why": "exchange-suffixed tickers (.DE, .L, .PA ...) are quoted in other currencies; comparing them with SPY would mix in FX moves"
+  },
+  {
+   "step": "price series found",
+   "before": 5897,
+   "removed": 276,
+   "after": 5621,
+   "why": "ticker does not resolve at Yahoo, Tiingo or the old price table - mostly garbled or invented symbols (NVIDIA, FORTNET, PALO ...)"
+  },
+  {
+   "step": "core channels",
+   "before": 5621,
+   "removed": 76,
+   "after": 5545,
+   "why": "channels with fewer than 50 analysed videos (added in a March 2026 test, or missing channel metadata) say nothing about the channel"
+  },
+  {
+   "step": "one call per channel/ticker/day",
+   "before": 5545,
+   "removed": 10,
+   "after": 5535,
+   "why": "two videos by the same channel on the same day repeating the same call"
+  },
+  {
+   "step": "entry price available",
+   "before": 5535,
+   "removed": 63,
+   "after": 5472,
+   "why": "no close within 5 days after the video: not listed yet, already delisted, or the ticker belongs to a different company at that time"
+  },
+  {
+   "step": "entry price at least $1",
+   "before": 5472,
+   "removed": 11,
+   "after": 5461,
+   "why": "penny-stock quotes below $1 (bankrupt shells, OTC leftovers) move in ticks of hundreds of percent and would dominate every average"
+  },
+  {
+   "step": "30-day return observable",
+   "before": 5461,
+   "removed": 0,
+   "after": 5461,
+   "why": "price series breaks off inside the first window"
+  }
+ ],
+ "audit_rows_surviving": 124
+}
